@@ -1,0 +1,23 @@
+Users:
+
+POST /users/ : Tạo tài khoản
+
+GET /users/:idOrName : Lấy thông tin của một người dùng
+
+GET /users/@me : Lấy thông tin của chính mình (tài khoản đang đăng nhập)
+Header: Authorization (access token được trả lại khi đăng nhập)
+
+DELETE /users/ : Xóa tài khoản đang đăng nhập
+Header: Authorization (access token được trả lại khi đăng nhập) (yêu cầu phải đăng nhập từ 1 tiếng đổ lại)
+
+---------------------------------------------------------------------------------------------------------------------------
+
+Sessions:
+POST /sessions/ : Đăng nhập
+Body: username, passsword là string
+
+GET /sessions/@me : Lấy thông tin session hiện tại
+Header: Authorization (access token được trả lại khi đăng nhập)
+
+DELETE /sessions : Đăng xuất
+Header: Authorization (access token được trả lại khi đăng nhập)

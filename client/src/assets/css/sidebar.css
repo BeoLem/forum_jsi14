@@ -1,0 +1,95 @@
+:root {
+  --sidebar-width: 300px;
+  --item-line-height: 40px;
+  --parts-padding-top-bottom: 20px;
+  --parts-padding-inline: 25px;
+  --main-color: rgb(0, 191, 191);
+}
+
+a {
+  color: black !important;
+  text-decoration: none;
+}
+
+p {
+  margin: 0;
+  padding: 0;
+}
+
+.interaction {
+  display: flex;
+}
+
+#sidebar {
+  width: var(--sidebar-width);
+  min-height: 100%;
+  position: fixed;
+  padding: var(--parts-padding-top-bottom) var(--parts-padding-inline);
+  border-right: 1px solid #d3d3d3;
+  background-color: #f8f9fb;
+}
+
+#fake-sidebar {
+  width: var(--sidebar-width);
+  height: 100%;
+  min-width: var(--sidebar-width);
+  position: relative;
+}
+
+#content {
+  width: 100%;
+  padding: var(--parts-padding-top-bottom) var(--parts-padding-inline);
+}
+
+.header .user img {
+  margin-right: 10px;
+}
+
+.header .title {
+  text-align: center;
+  font-weight: bold;
+}
+
+.items .item {
+  display: flex;
+  margin: 10px 0;
+  align-items: center;
+  height: var(--item-line-height);
+}
+
+.item i {
+  margin-right: 20px;
+}
+
+.header .user {
+  display: flex;
+  align-items: center;
+  justify-content: left;
+}
+
+.header .user .avatar {
+  max-width: 50px;
+  max-height: 50px;
+  border-radius: 50%;
+}
+
+#sidebar .item:hover i,
+#sidebar .item:hover a {
+  color: var(--main-color) !important;
+}
+
+.item.chosen i {
+  color: var(--main-color) !important;
+}
+
+#sidebar .item.chosen a {
+  color: var(--main-color) !important;
+}
+
+.item.chosen::before {
+  content: "\25CF";
+  color: var(--main-color);
+  transform: scale(2);
+  position: absolute;
+  left: -5px;
+}

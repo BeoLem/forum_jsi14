@@ -1,0 +1,78 @@
+<link rel="stylesheet" href="/assets/css/sidebar.css" />
+
+<div id="sidebar">
+  <div class="header">
+    <h3 class="title">CFrum</h3>
+
+    <div class="user">
+      <% if(locals.user.username) { %>
+      <img
+        class="avatar"
+        src="https://avatars.dicebear.com/api/initials/<%= locals.user?.username || 'Guest' %>.svg"
+        onerror="this.src = '/assets/imgs/avatar.png'"
+      />
+      <% } else { %>
+      <img
+        class="avatar"
+        src="/assets/imgs/avatar.png"
+        onerror="this.src = '/assets/imgs/avatar.png'"
+      />
+      <% } %>
+      <p class="username"><%= locals.user?.username || "Guest" %></p>
+    </div>
+  </div>
+
+  <div class="items">
+    <div class="item" id="home">
+      <i class="fa-solid fa-house"></i>
+      <a href="/" class="name">Home</a>
+    </div>
+    <div class="item" id="about">
+      <i class="fa-solid fa-info"></i>
+      <a href="/about" class="name">About Us</a>
+    </div>
+    <div class="item" id="blog">
+      <i class="fa-solid fa-rss"></i>
+      <a href="/blogs/" class="name">Blogs</a>
+    </div>
+    <div class="item" id="user">
+      <i class="fa-solid fa-user"></i>
+      <a href="/users/" class="name">Users</a>
+    </div>
+    <div class="item" id="settings">
+      <i class="fa-solid fa-gear"></i>
+      <a href="/settings/" class="name">Settings</a>
+    </div>
+    <% if (locals.user.username) { %>
+    <div class="item" id="logout">
+      <i class="fa-solid fa-right-from-bracket"></i>
+      <a href="/auth/logout" class="name">Log Out</a>
+    </div>
+    <% } else { %>
+    <div class="item" id="login">
+      <i class="fa-solid fa-right-to-bracket"></i>
+      <a href="/auth/login" class="name">Log In</a>
+    </div>
+    <% } %>
+  </div>
+</div>
+
+<div id="fake-sidebar"></div>
+
+<script>
+  function renderChosenItem() {
+    const sidebarId = '<%= page.sidebarId || "" %>';
+    if (!sidebarId) return;
+    const menuItem = document.querySelector(`.item#${sidebarId}`);
+    if (!menuItem) return;
+    menuItem.classList.add("chosen");
+  }
+
+  function render() {
+    renderChosenItem();
+  }
+
+  render();
+</script>
+
+<!-- <div id="fake-sidebar"></div> -->

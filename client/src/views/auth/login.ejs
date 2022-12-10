@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title><%= page.title %></title>
+    <link rel="stylesheet" href="/assets/css/auth.css" />
+    <link rel="stylesheet" href="/assets/css/global.css" />
+    <%- include('../partials/components.ejs') %>
+  </head>
+  <body>
+    <div class="toast bg-danger text-white fade hide" id="errorToast">
+      <div class="toast-header bg-danger text-white">
+        <strong class="me-auto"
+          ><i class="fa-solid fa-circle-xmark"></i> Error
+        </strong>
+        <button
+          type="button"
+          class="btn-close btn-close-white"
+          data-bs-dismiss="toast"
+        ></button>
+      </div>
+      <div class="toast-body"><%= query.error %></div>
+    </div>
+
+    <div class="toast bg-primary text-white fade hide" id="notiToast">
+      <div class="toast-header bg-primary text-white">
+        <strong class="me-auto"
+          ><i class="fa-solid fa-circle-exclamation"></i> Notification
+        </strong>
+        <button
+          type="button"
+          class="btn-close btn-close-white"
+          data-bs-dismiss="toast"
+        ></button>
+      </div>
+      <div class="toast-body"><%= query.notification %></div>
+    </div>
+
+    <div class="auth-container">
+      <div class="info-model">
+        <h1>CFrum</h1>
+        <h4>
+          Lorem ipsum dolor, sit amet consectetur adipisicing elit. Sed libero,
+          similique adipisci debitis velit quasi nihil quae! Neque quibusdam
+          voluptatum voluptas debitis quisquam laboriosam, maiores atque
+          adipisci. Facere, corrupti sint.
+        </h4>
+      </div>
+      <div class="auth-model">
+        <form class="auth-content" method="post">
+          <img src="/assets/imgs/avatar.png" alt="" />
+
+          <div class="auth-header">
+            <p style="font-weight: bold">Welcome</p>
+            <span>Discuss about Christmas with other people</span>
+          </div>
+
+          <div class="input-group mb-3">
+            <span class="input-group-text" id="basic-addon1">
+              <i class="fa-solid fa-user"></i>
+            </span>
+            <input
+              required
+              type="text"
+              class="form-control"
+              placeholder="Username"
+              id="username"
+              name="username"
+            />
+          </div>
+
+          <div class="input-group mb-3">
+            <span class="input-group-text" id="basic-addon2">
+              <i class="fa-solid fa-key"></i>
+            </span>
+            <input
+              required
+              type="password"
+              class="form-control"
+              placeholder="Password"
+              id="password"
+              name="password"
+            />
+          </div>
+          <div class="w-100" id="btn-container">
+            <button class="btn btn-primary w-100" type="submit">
+              <span><i class="fa-solid fa-right-to-bracket"></i></span>
+              <span>Log in</span>
+            </button>
+          </div>
+
+          <p class="mt-2">
+            Don't have an account?
+            <a href="/auth/register">Register</a>
+          </p>
+        </form>
+      </div>
+    </div>
+  </body>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      if ("<%= query.error %>") {
+        var element = document.getElementById("errorToast");
+        // Create toast instance
+        var myToast = new bootstrap.Toast(element);
+        myToast.show();
+      } else;
+      if ("<%= query.notification %>") {
+        var element = document.getElementById("notiToast");
+        // Create toast instance
+        var myToast = new bootstrap.Toast(element);
+        myToast.show();
+      }
+    });
+
+    const form = document.querySelector("form");
+    form.addEventListener("submit", (e) => {
+      document.querySelector("#btn-container").innerHTML = `
+    <button class = "btn btn-primary w-100" type="button" disabled>
+      <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+      <span>Handling...</span>
+      </button>
+    `;
+    });
+  </script>
+</html>
