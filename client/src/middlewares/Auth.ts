@@ -9,7 +9,6 @@ import { CSession } from "../documents/Session";
 
 export let AuthUser = (
   stopIfNotAuth: true | false = true,
-  dangerousAction: true | false = false
 ) => {
   return async (req: Request, res: Response, next: NextFunction) => {
     let token = req.cookies["accessToken"];
@@ -20,7 +19,6 @@ export let AuthUser = (
       );
     }
 
-    let userRequest: any;
     let userData: any;
     let requestAccessData: any;
     let accessSessionData: any;
@@ -71,7 +69,7 @@ export let AuthUser = (
         } catch (err) {
           logger.error(err);
           res.clearCookie("accessToken");
-          return res.redirect("/auth/login?error=Your session is expired");
+          return res.redirect("/auth/login?error=Couldn't connect to the server");
         }
 
         let newAccTokenData =
@@ -82,8 +80,9 @@ export let AuthUser = (
           token = newAccTokenData.accessToken;
           res.cookie("accessToken", newAccTokenData.accessToken);
           accessSessionData = {
-            session: newAccTokenData.data,
+            session: newAccTokenData.accessSessionData,
           };
+          userData = newAccTokenData.userData;
           requestAccessData = newAccTokenRequest;
         } else {
           res.clearCookie("accessToken");
@@ -95,37 +94,13 @@ export let AuthUser = (
       }
     }
 
-    if (accessSessionData) accessSessionData = accessSessionData.session;
 
-    try {
-      userRequest = await fetch(
-        `${config.get("backend.type")}://${config.get(
-          "backend.host"
-        )}:${config.get("backend.port")}/users/@me`,
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: token,
-          },
-        }
-      );
-    } catch (err) {
-      logger.error(err);
-      return res.redirect("/auth/login?error=Could not connect to the server");
+    if (accessSessionData && accessSessionData.session && accessSessionData.user) {
+      userData = accessSessionData.user,
+      accessSessionData = accessSessionData.session
     }
 
-    userData =
-      (await userRequest.json()) || JSON.parse(await userRequest.text());
-
-    if (
-      (!userData || !`${userData.statusCode}`.startsWith("2") || !userData) &&
-      stopIfNotAuth
-    ) {
-      res.clearCookie("accessToken");
-      return res.redirect("/auth/login?error=Your session is expired");
-    }
-
-    if (userData) userData = userData.user;
+    // if (userData) userData = userData.user;
 
     if (!userData?.id) userData = {};
     if (!accessSessionData?.id) accessSessionData = {};

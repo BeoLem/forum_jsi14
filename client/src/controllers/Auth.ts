@@ -77,7 +77,10 @@ export const LogTheUserIn = async (req: Request, res: Response) => {
       }
     );
   } catch (err) {
-    return res.redirect(`/auth/login?error=Couldn't connect to the server`);
+    return res.status(401).send({
+      message: "Couldn't connect to the server",
+      statusCode: 401,
+    })
   }
 
   const data = (await request.json()) || JSON.parse(await request.text());
@@ -89,7 +92,10 @@ export const LogTheUserIn = async (req: Request, res: Response) => {
   ) {
     res.cookie("refreshToken", data.refreshToken);
     res.cookie("accessToken", data.accessToken);
-    res.redirect("/");
+    res.status(200).send({
+      message: "Logged in successfully",
+      statusCode: 200,
+    })
 
     if (oldAccessToken) {
       fetch(
@@ -106,7 +112,10 @@ export const LogTheUserIn = async (req: Request, res: Response) => {
       ).catch(() => {});
     }
   } else {
-    res.redirect(`/auth/login?error=${data.message || "Unknown"}`);
+    res.status(401).send({
+      message: `${data.message}`,
+      statusCode: 401,
+    })
   }
 };
 
@@ -139,13 +148,22 @@ export const CreateAnAccount = async (req: Request, res: Response) => {
       }
     );
   } catch (err) {
-    return res.redirect(`/auth/register?error=Couldn't connect to the server`);
+    return res.status(401).send({
+      message: "Couldn't connect to the server",
+      statusCode: 401,
+    })
   }
 
   const data = (await request.json()) || JSON.parse(await request.text());
   if (data.id && data.statusCode >= 200 && data.statusCode < 300) {
-    res.redirect("/auth/login?notification=Please login with your new account");
+    res.status(200).send({
+      message: "Account created successfully",
+      statusCode: 200,
+    })
   } else {
-    res.redirect(`/auth/register?error=${data.message || "Unknown"}`);
+    res.status(401).send({
+      message: `${data.message}`,
+      statusCode: 401,
+    })
   }
 };

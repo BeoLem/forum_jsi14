@@ -72,6 +72,8 @@ export const GetCurrentSession = async (req: Request, res: Response) => {
     res.send(
         CreateRespond(null, 200, {
             session: res.locals.session || null,
+            user: res.locals.user,
+            refreshSession: res.locals.refreshSession,
         })
     )
 }
@@ -102,8 +104,6 @@ export const RegenerateAccessToken = async (req: Request, res: Response) => {
     } catch (err) {
         return res.status(401).send(CreateRespond(`Invalid token`, 401))
     }
-
-    console.log(refData)
 
     if (!refData || !refData.user || !refData.session)
         return res.status(401).send(CreateRespond(`Invalid token`, 401))
@@ -139,13 +139,19 @@ export const RegenerateAccessToken = async (req: Request, res: Response) => {
 
     let newAccDoc = await getDoc(doc(database, 'sessions', accToken.session.id).withConverter(SessionConverter));
     let newAccData = newAccDoc?.data() || null;
+    let userDoc = await getDoc(doc(database, 'users', newAccData?.user || "").withConverter(UserConverter));
+    let userData = userDoc?.data() || null;
 
     res.send(
         CreateRespond('Successfully', 200, {
             accessToken: accToken?.token,
-            data: {
+            accessSessionData: {
                 ...newAccData,
                 id: newAccDoc.id
+            },
+            userData: {
+                ...userData,
+                id: userDoc.id
             }
         })
     )

@@ -10,34 +10,7 @@
     <%- include('../partials/components.ejs') %>
   </head>
   <body>
-    <div class="toast bg-danger text-white fade hide" id="errorToast">
-      <div class="toast-header bg-danger text-white">
-        <strong class="me-auto"
-          ><i class="fa-solid fa-circle-xmark"></i> Error
-        </strong>
-        <button
-          type="button"
-          class="btn-close btn-close-white"
-          data-bs-dismiss="toast"
-        ></button>
-      </div>
-      <div class="toast-body"><%= query.error %></div>
-    </div>
-
-    <div class="toast bg-primary text-white fade hide" id="notiToast">
-      <div class="toast-header bg-primary text-white">
-        <strong class="me-auto"
-          ><i class="fa-solid fa-circle-exclamation"></i> Notification
-        </strong>
-        <button
-          type="button"
-          class="btn-close btn-close-white"
-          data-bs-dismiss="toast"
-        ></button>
-      </div>
-      <div class="toast-body"><%= query.notification %></div>
-    </div>
-
+    <div class="toasts"></div>
     <div class="auth-container">
       <div class="info-model">
         <h1>CFrum</h1>
@@ -85,15 +58,29 @@
             />
           </div>
           <div class="w-100" id="btn-container">
-            <button class="btn btn-primary w-100" type="submit">
+            <button class="btn submit-btn btn-primary w-100">
               <span><i class="fa-solid fa-right-to-bracket"></i></span>
-              <span>Log in</span>
+              <span>Log In</span>
             </button>
           </div>
 
+          <% let serialize = function(obj) {
+            var str = [];
+            for (var p in obj)
+              if (obj.hasOwnProperty(p)) {
+                str.push(encodeURIComponent(p) + "=" + encodeURIComponent(obj[p]));
+              }
+            if(str.length) return "";
+            else return "?" + str.join("&")
+          }
+          let queryString = serialize({
+            ...query,
+            notification: "Please use your new account to log in"
+          } %>
+          
           <p class="mt-2">
             Don't have an account?
-            <a href="/auth/register">Register</a>
+            <a href="/auth/register/<%= queryString %>">Register</a>
           </p>
         </form>
       </div>
@@ -101,29 +88,114 @@
   </body>
 
   <script>
+    function displayErrorToast(message) {
+      const toast_container = document.querySelector(".toasts");
+      toast_container.innerHTML += `
+        <div class="toast bg-danger text-white fade show errorToast">
+      <div class="toast-header bg-danger text-white">
+        <strong class="me-auto"
+          ><i class="fa-solid fa-circle-xmark"></i> Error
+        </strong>
+        <button
+          type="button"
+          class="btn-close btn-close-white"
+          data-bs-dismiss="toast"
+        ></button>
+      </div>
+      <div class="toast-body">${message}</div>
+    </div>`;
+    }
+
+    function displayNotiToast(message) {
+      const toast_container = document.querySelector(".toasts");
+      toast_container.innerHTML += `
+        <div class="toast bg-primary text-white fade show" id="notiToast">
+      <div class="toast-header bg-primary text-white">
+        <strong class="me-auto"
+          ><i class="fa-solid fa-circle-exclamation"></i> Notification
+        </strong>
+        <button
+          type="button"
+          class="btn-close btn-close-white"
+          data-bs-dismiss="toast"
+        ></button>
+      </div>
+      <div class="toast-body">${message}</div>
+    </div>`;
+    }
+
     document.addEventListener("DOMContentLoaded", function () {
       if ("<%= query.error %>") {
-        var element = document.getElementById("errorToast");
-        // Create toast instance
-        var myToast = new bootstrap.Toast(element);
-        myToast.show();
+        displayErrorToast("<%= query.error %>");
       } else;
       if ("<%= query.notification %>") {
-        var element = document.getElementById("notiToast");
-        // Create toast instance
-        var myToast = new bootstrap.Toast(element);
-        myToast.show();
+        displayNotiToast("<%= query.notification %>");
       }
-    });
 
-    const form = document.querySelector("form");
-    form.addEventListener("submit", (e) => {
-      document.querySelector("#btn-container").innerHTML = `
-    <button class = "btn btn-primary w-100" type="button" disabled>
-      <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-      <span>Handling...</span>
-      </button>
+      const form = document.querySelector("form");
+      form.onsubmit = async() => {
+        event.preventDefault();
+        document.querySelector("#btn-container").innerHTML = `
+        <div class="w-100" id="btn-container">
+            <button class="btn submit-btn btn-primary w-100" type="submit" disabled>
+              <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+              <span>Handling...</span>
+            </button>
+          </div>
     `;
+        let request;
+        try {
+          request = await fetch("/auth/login", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              username: form.username.value || "",
+              password: form.password.value || "",
+            }),
+          });
+        } catch (err) {
+          console.log(err);
+        displayErrorToast(`${err}`);
+        }
+        let data;
+        try {
+          data = (await request.json()) || JSON.parse(await request.text());
+        } catch (err) {
+          displayErrorToast(`${err}`);
+          console.log(err);
+          return (document.querySelector("#btn-container").innerHTML = `
+            <div class="w-100" id="btn-container">
+            <button class="btn submit-btn btn-primary w-100" type="submit">
+              <span><i class="fa-solid fa-right-to-bracket"></i></span>
+              <span>Log In</span>
+            </button>
+          </div>
+    `);
+        }
+        if (data.statusCode >= 200 && data.statusCode <= 300) {
+          document.querySelector("#btn-container").innerHTML = `
+            <div class="w-100" id="btn-container">
+            <button class="btn submit-btn btn-primary w-100" type="submit" disabled>
+              <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+              <span>Redirecting...</span>
+            </button>
+          </div>
+    `;
+          location.href = '<%= query.redirectTo || "/" %>';
+        } else {
+          displayErrorToast(`${data.message}`);
+          document.querySelector("#btn-container").innerHTML = `
+            <div class="w-100" id="btn-container">
+            <button class="btn submit-btn btn-primary w-100" type="submit">
+              <span><i class="fa-solid fa-right-to-bracket"></i></span>
+              <span>Log In</span>
+            </button>
+          </div>
+    `;
+        }
+      };
     });
   </script>
 </html>
