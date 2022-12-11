@@ -64,23 +64,9 @@
             </button>
           </div>
 
-          <% let serialize = function(obj) {
-            var str = [];
-            for (var p in obj)
-              if (obj.hasOwnProperty(p)) {
-                str.push(encodeURIComponent(p) + "=" + encodeURIComponent(obj[p]));
-              }
-            if(str.length) return "";
-            else return "?" + str.join("&")
-          }
-          let queryString = serialize({
-            ...query,
-            notification: "Please use your new account to log in"
-          } %>
-          
           <p class="mt-2">
             Don't have an account?
-            <a href="/auth/register/<%= queryString %>">Register</a>
+            <a href="/auth/register">Register</a>
           </p>
         </form>
       </div>
@@ -88,6 +74,9 @@
   </body>
 
   <script>
+    if ("<%= query.redirectTo %>") {
+      localStorage.setItem("redirectTo", "<%= query.redirectTo %>");
+    }
     function displayErrorToast(message) {
       const toast_container = document.querySelector(".toasts");
       toast_container.innerHTML += `
@@ -133,7 +122,7 @@
       }
 
       const form = document.querySelector("form");
-      form.onsubmit = async() => {
+      form.onsubmit = async () => {
         event.preventDefault();
         document.querySelector("#btn-container").innerHTML = `
         <div class="w-100" id="btn-container">
@@ -157,7 +146,7 @@
           });
         } catch (err) {
           console.log(err);
-        displayErrorToast(`${err}`);
+          displayErrorToast(`${err}`);
         }
         let data;
         try {
@@ -183,7 +172,12 @@
             </button>
           </div>
     `;
-          location.href = '<%= query.redirectTo || "/" %>';
+          if(localStorage.getItem('redirectTo')) {
+            location.href = localStorage.getItem('redirectTo');
+            localStorage.removeItem('redirectTo')
+          } else {
+            location.href = '/';
+          }
         } else {
           displayErrorToast(`${data.message}`);
           document.querySelector("#btn-container").innerHTML = `

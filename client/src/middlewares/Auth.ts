@@ -15,7 +15,7 @@ export let AuthUser = (
     if ((!token || !JWTCheck(token)) && stopIfNotAuth) {
       res.clearCookie("accessToken");
       return res.redirect(
-        "/auth/login?error=You must be logged in to continue"
+        "/auth/login?notification=Please log in to continue"
       );
     }
 
@@ -37,7 +37,7 @@ export let AuthUser = (
       );
     } catch (err) {
       logger.error(err);
-      return res.redirect("/auth/login?error=Could not connect to the server");
+      return res.redirect("/auth/login?error=Couldn't verify your identity");
     }
 
     accessSessionData =
@@ -47,8 +47,7 @@ export let AuthUser = (
     if (
       (!accessSessionData ||
         !`${accessSessionData.statusCode}`.startsWith("2") ||
-        !accessSessionData) &&
-      stopIfNotAuth
+        !accessSessionData)
     ) {
       if (req.cookies["refreshToken"]) {
         let newAccTokenRequest;
@@ -69,14 +68,14 @@ export let AuthUser = (
         } catch (err) {
           logger.error(err);
           res.clearCookie("accessToken");
-          return res.redirect("/auth/login?error=Couldn't connect to the server");
+          return res.redirect("/auth/login?error=Couldn't verify your identity");
         }
 
         let newAccTokenData =
           (await newAccTokenRequest.json()) ||
           JSON.parse(await newAccTokenRequest.text());
 
-        if (newAccTokenData.accessToken && newAccTokenData.data) {
+        if (newAccTokenData.accessToken && newAccTokenData.userData) {
           token = newAccTokenData.accessToken;
           res.cookie("accessToken", newAccTokenData.accessToken);
           accessSessionData = {
@@ -86,17 +85,22 @@ export let AuthUser = (
           requestAccessData = newAccTokenRequest;
         } else {
           res.clearCookie("accessToken");
-          return res.redirect("/auth/login?error=Your session is expired");
+          if (stopIfNotAuth)
+            return res.redirect(
+              "/auth/login?notification=Your session is expired"
+            );
         }
       } else {
         res.clearCookie("accessToken");
-        return res.redirect("/auth/login?error=Your session is expired");
+        if (stopIfNotAuth)
+          return res.redirect(
+            "/auth/login?notification=Your session is expired"
+          );
       }
     }
 
-
-    if (accessSessionData && accessSessionData.session && accessSessionData.user) {
-      userData = accessSessionData.user,
+    if (accessSessionData && accessSessionData.session) {
+      if(accessSessionData.user && !userData) userData = accessSessionData.user,
       accessSessionData = accessSessionData.session
     }
 

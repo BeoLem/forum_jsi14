@@ -1,5 +1,9 @@
 @import url("https://fonts.googleapis.com/css2?family=Nunito+Sans&display=swap");
 
+:root {
+  --main-color: rgb(0, 191, 191)
+}
+
 * {
   font-family: "Nunito Sans", sans-serif;
   font-weight: bold;
@@ -10,5 +14,163 @@
 
 .toast {
   position: absolute;
-  right: 0;
+  top: 5px;
+  right: 5px;
+}
+
+.loading_icon {
+  background: white;
+  z-index: 2;
+  position: fixed;
+  min-width: 100%;
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  top: -30px;
+}
+
+.music-waves-2 {
+  height: 70px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.music-waves-2 > span {
+  display: block;
+  position: relative;
+  background: #000;
+  height: 100%;
+  width: 1rem;
+  border-radius: 1rem;
+  margin: 0 0.2rem;
+  animation: waves-2 1.2s linear infinite;
+}
+
+.music-waves-2 > span:nth-child(1) {
+  animation-delay: 0s;
+  background: var(--main-color);
+}
+
+.music-waves-2 > span:nth-child(2) {
+  animation-delay: 0.3s;
+  background: var(--main-color);
+}
+
+.music-waves-2 > span:nth-child(3) {
+  animation-delay: 0.6s;
+  background: var(--main-color);
+}
+
+.music-waves-2 > span:nth-child(4) {
+  animation-delay: 0.9s;
+  background: var(--main-color);
+}
+
+.music-waves-2 > span:nth-child(5) {
+  animation-delay: 0.6s;
+  background: var(--main-color);
+}
+
+.music-waves-2 > span:nth-child(6) {
+  animation-delay: 0.3s;
+  background: var(--main-color);
+}
+
+.music-waves-2 > span:nth-child(7) {
+  animation-delay: 0s;
+  background: var(--main-color);
+}
+
+@keyframes waves-2 {
+  50% {
+    height: 20%;
+  }
+
+  100% {
+    height: 100%;
+  }
+}
+
+.dashed-loading {
+  position: relative;
+  height: 50px;
+}
+
+.dashed-loading:after,
+.dashed-loading:before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+}
+
+.dashed-loading:before {
+  z-index: 5;
+  border: 3px dashed #ff6bcb;
+  border-left: 3px solid transparent;
+  border-bottom: 3px solid transparent;
+  -webkit-animation: dashed 1s linear infinite;
+  animation: dashed 1s linear infinite;
+}
+
+.dashed-loading:after {
+  z-index: 10;
+  border: 3px solid #ffb86c;
+  border-left: 3px solid transparent;
+  border-bottom: 3px solid transparent;
+  -webkit-animation: dashed 1s ease infinite;
+  animation: dashed 1s ease infinite;
+}
+
+@keyframes dashed {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes dot-flasing {
+  0% {
+    background-color: #9880ff;
+  }
+
+  50%,
+  100% {
+    background-color: #ebe6ff;
+  }
+}
+
+.dot-flasing {
+  display: flex;
+  justify-content: center;
+}
+
+.dot-flasing > div {
+  margin: 0 0.5rem;
+  width: 1rem;
+  height: 1rem;
+  border-radius: 50%;
+  background-color: #9880ff;
+  animation: dot-flasing 0.8s infinite alternate;
+}
+
+.dot-flasing > div:first-child {
+  animation-delay: 0s;
+}
+
+.dot-flasing > div:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.dot-flasing > div:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+.dot-flasing > div:last-child {
+  animation-delay: 0.6s;
 }
