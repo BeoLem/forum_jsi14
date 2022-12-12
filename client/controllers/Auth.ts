@@ -29,7 +29,7 @@ export const GetRegisterPage = async (req: Request, res: Response) => {
 export const LogOut = async (req: Request, res: Response) => {
   if (req.cookies["accessToken"]) {
     fetch(
-      `${getHost(req)}${config.get("frontend.backend.path")}/sessions/`,
+      `${config.get("frontend.backend.path")}/sessions/`,
       {
         method: "DELETE",
         headers: {
@@ -58,13 +58,13 @@ export const LogTheUserIn = async (req: Request, res: Response) => {
     );
   }
   
-  console.log(`${getHost(req)}`)
-  console.log(`${getHost(req)}${config.get("frontend.backend.path")}/sessions/`)
+  console.log(``)
+  console.log(`${config.get("frontend.backend.path")}/sessions/`)
   
   let request;
   try {
     request = await fetch(
-      `${getHost(req)}${config.get("frontend.backend.path")}/sessions/`,
+      `${config.get("frontend.backend.path")}/sessions/`,
       {
         method: "POST",
         headers: {
@@ -99,7 +99,7 @@ export const LogTheUserIn = async (req: Request, res: Response) => {
 
     if (oldAccessToken) {
       fetch(
-        `${getHost(req)}${config.get("frontend.backend.path")}/sessions/`,
+        `${config.get("frontend.backend.path")}/sessions/`,
         {
           method: "DELETE",
           headers: {
@@ -130,7 +130,7 @@ export const CreateAnAccount = async (req: Request, res: Response) => {
   let request;
   try {
     request = await fetch(
-      `${getHost(req)}${config.get("frontend.backend.path")}/users/`,
+      `${config.get("frontend.backend.path")}/users/`,
       {
         method: "POST",
         headers: {

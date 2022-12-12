@@ -26,7 +26,7 @@ export let AuthUser = (
 
     try {
       requestAccessData = await fetch(
-        `${getHost(req)}${config.get("frontend.backend.path")}/sessions/@me`,
+        `${config.get("frontend.backend.path")}/sessions/@me`,
         {
           headers: {
             "Content-Type": "application/json",
@@ -53,7 +53,7 @@ export let AuthUser = (
 
         try {
           newAccTokenRequest = await fetch(
-            `${getHost(req)}${config.get("frontend.backend.path")}/sessions`,
+            `${config.get("frontend.backend.path")}/sessions`,
             {
               method: "PATCH",
               headers: {

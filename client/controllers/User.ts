@@ -21,7 +21,7 @@ export const GetSpecificUser = async(req: Request, res: Response) => {
     page: {
       title: `CFrum User | ${id}`,
       sidebarId: "user",
-      userURLFetch: `${getHost(req)}${config.get("frontend.backend.path")}/users/${id}`,
+      userURLFetch: `${config.get("frontend.backend.path")}/users/${id}`,
     },
   });
 }

@@ -1,0 +1,46 @@
+{
+    "backend": {
+        "firebase": {
+            "config": {
+                "apiKey": "AIzaSyCe8JXmrLhJzj6Nwrqdbk_MxkTS6QF3tZQ",
+                "authDomain": "forum-mindx-project.firebaseapp.com",
+                "projectId": "forum-mindx-project",
+                "storageBucket": "forum-mindx-project.appspot.com",
+                "messagingSenderId": "1095226399110",
+                "appId": "1:1095226399110:web:9c662f50c04c063a1df407",
+                "measurementId": "G-3ZRX4MBPWN"
+            }
+        },
+        "auth": {
+            "jwt": "e3nvL5y3H3tztdcgXwNprxOJeUaWV7n+NCqmF2dSDTgaMbnjxHizBQXEkHdJUypJkPLiVpaNlMK+CscCTQGm1w==",
+            "accessTokenExpires": "1d",
+            "refreshTokenExpires": "1w",
+            "dangerousActions": {
+                "refreshToken": 3600000,
+                "accessToken": 3600000,
+                "_comment": [
+                    "This means if you want to do dangerous actions, like: delete account:",
+                    "Your refresh token & access token must be created less than 1 hour ago",
+                    "(= logged in 1 hour ago)",
+                    "otherwise, you must log in again"
+                ]
+            }
+        },
+        "bcrypt": {
+            "salt": 10
+        }
+    },
+    "frontend": {
+        "server": {
+            "port": 3000
+        },
+        "backend": {
+            "path": "http://localhost:3000/api"
+        }
+    },
+    "general": {
+        "server": {
+            "port": 3000
+        }
+    }
+}
