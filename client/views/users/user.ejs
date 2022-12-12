@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title><%= page.title %></title>
+    <script src="/assets/js/utils.js"></script>
+    <%- include('../partials/components.ejs') %>
+  </head>
+  <body>
+    <div class="interaction">
+      <%- include('../partials/sidebar.ejs') %>
+      <div id="content"></div>
+    </div>
+  </body>
+  <script>
+    async function render() {
+      const userId = `<%= userId %>`;
+      showLoadingIcon();
+
+      let requestData;
+      try {
+        let userRequest = await fetch(`<%= page.userURLFetch %>`);
+        requestData =
+          (await userRequest.json()) || JSON.parse(await userRequest.text());
+      } catch (err) {
+        console.log(err);
+        displayErrorToast(`${err}`);
+        hideLoadingIcon();
+      }
+
+      if (requestData.statusCode >= 200 && requestData.statusCode < 300) {
+        if (!requestData.user.id) {
+          displayNotiToast(`User is not exist!`);
+          hideLoadingIcon();
+        } else {
+          const userData = requestData.user
+          // Handle Created At
+          const date = new Date(userData.timestamp.seconds * 1000);
+          const string = `${date.toDateString()}, ${date.toLocaleTimeString()}`;
+
+          let createdAt = string;
+          // End - Handle Created At
+          const contentContainer = document.querySelector("#content");
+          contentContainer.innerHTML += `
+      <ul>
+          <li>ID: ${userData.id}</li>
+          <li>Username: ${userData.username}</li>
+          <li>Email: ${userData.email}</li>
+          <li class="createdAt">Created At: ${createdAt} (milliseconds)</li>
+      </ul>
+      `;
+      hideLoadingIcon();
+        }
+      } else {
+        console.log(`${requestData.message}`);
+        displayErrorToast(`${requestData.message}`);
+        hideLoadingIcon();
+      }
+      console.log(requestData);
+    }
+
+    render();
+  </script>
+</html>
+
+<style></style>
