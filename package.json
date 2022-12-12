@@ -17,7 +17,7 @@
   "version": "1.0.0",
   "main": "app.js",
   "scripts": {
-    "start": "ts-node ./app.ts",
+    "start": "npx ts-node ./app.ts",
     "start:dev": "npx nodemon ./app.ts"
   },
   "keywords": [],

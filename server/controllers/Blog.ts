@@ -10,12 +10,14 @@ import {
     orderBy,
     query,
     serverTimestamp,
+    where,
+    QueryConstraint
 } from 'firebase/firestore'
 import { database } from '../app'
 import { Category } from '../configurations/Category'
 import { CBlog } from '../documents/Blog'
 import { Response } from '../typings/Response'
-import { BlogConverter, TimestampConverter } from '../utils/Converters'
+import { BlogConverter } from '../utils/Converters'
 import { CreateRespond } from '../utils/Response'
 
 export const CreateBlog = async (req: Request, res: Response) => {
@@ -80,8 +82,13 @@ export const GetBlogList = async (req: Request, res: Response) => {
     if (minRange == 0) minRange = 1
     if (maxRange == 0) maxRange = 10
 
+    const queryArguments: QueryConstraint[] = [orderBy("timestamp", "desc"), limit(maxRange)];
+    if(queries.author) {
+        queryArguments.push(where("author", "==", queries.author));
+    }
+
     const docs = await getDocs(
-        query(ref, orderBy('timestamp', 'desc'), limit(maxRange))
+        query(ref, ...queryArguments),
     )
 
     let blogs: (CBlog & { id: string })[] = []
