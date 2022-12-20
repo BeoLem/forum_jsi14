@@ -6,12 +6,12 @@
   --main-color: rgb(0, 191, 191);
 }
 
-a {
+#sidebar a {
   color: black;
   text-decoration: none;
 }
 
-p {
+#sidebar p {
   margin: 0;
   padding: 0;
 }
@@ -91,7 +91,6 @@ p {
 .item.chosen::before {
   content: "\25CF";
   color: var(--main-color);
-  transform: scale(2);
   position: absolute;
   left: -5px;
 }

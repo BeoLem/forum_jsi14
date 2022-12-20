@@ -2,3 +2,4 @@ node_modules
 .vscode
 design
 build
+bower_components

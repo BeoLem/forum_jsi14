@@ -1,42 +1,16 @@
 import express from 'express'
+import { AuthUser } from "../middlewares/Auth";
+import { GetCreateBlogPage } from '../controllers/Blog';
 
 const router = express.Router()
 
-// /**
-//  * @route /blogs/
-//  * @method post
-//  * @access public
-//  * @desc Create a blog
-//  */
-// router.post(
-//     '/',
-//     ValidateHeader([
-//         {
-//             name: 'authorization',
-//             type: 'string',
-//             required: true,
-//         },
-//     ]),
-//     ValidateBody([
-//         {
-//             name: 'title',
-//             type: 'string',
-//             required: true,
-//         },
-//         {
-//             name: 'description',
-//             type: 'string',
-//             required: true,
-//         },
-//         {
-//             name: 'category',
-//             type: 'string',
-//             required: true,
-//         },
-//     ]),
-//     AuthUser(true),
-//     CreateBlog
-// )
+/**
+ * @route /blogs/create
+ * @method get
+ * @access public
+ * @desc Get the create blog page
+ */
+router.get("/create", AuthUser(true), GetCreateBlogPage);
 
 // /**
 //  * @route /blogs/:id

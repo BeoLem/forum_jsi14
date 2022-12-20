@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title><%= page.title %></title>
+    <%- include('../partials/components.ejs') %> <%-
+    include('../partials/markdown.ejs') %>
+  </head>
+  <body>
+    <div class="container">
+      <h3 class="title">Create a blog</h3>
+      <input type="text" title="Blog Title" placeholder="The title of your blog">
+
+      <form id="form">
+        <textarea name="text" id="editor">The description of your blog</textarea>
+      </form>
+    </div>
+  </body>
+  <script type="text/javascript">
+    jQuery(document).ready(function ($) {
+      $("#editor").markdownEditor({
+        preview: true,
+        onPreview: function (content, callback) {
+          callback(marked.parse(content));
+        },
+      });
+    });
+  </script>
+</html>
+
+<style>
+  .title {
+    text-align: center;
+    font-weight: bold;
+  }
+</style>
