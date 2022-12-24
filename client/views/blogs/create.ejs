@@ -9,22 +9,113 @@
     include('../partials/markdown.ejs') %>
   </head>
   <body>
+    <div class="toasts"></div>
     <div class="container">
-      <h3 class="title">Create a blog</h3>
-      <input type="text" title="Blog Title" placeholder="The title of your blog">
-
       <form id="form">
-        <textarea name="text" id="editor">The description of your blog</textarea>
+        <h3 class="title">Create a blog</h3>
+        <input
+          type="text"
+          title="Blog Title"
+          placeholder="Title (Required)"
+          required
+          class="inputTitle"
+        />
+        <textarea name="text" id="editor"></textarea>
+
+        <div class="w-100" id="btn-container">
+          <button class="submit-btn">
+            <span><i class="fa-regular fa-calendar-plus"></i></span>
+            <span>Create a blog</span>
+          </button>
+        </div>
       </form>
     </div>
   </body>
   <script type="text/javascript">
-    jQuery(document).ready(function ($) {
-      $("#editor").markdownEditor({
-        preview: true,
-        onPreview: function (content, callback) {
-          callback(marked.parse(content));
-        },
+    document.addEventListener("DOMContentLoaded", () => {
+      const submitBtnContainer = document.querySelector("#btn-container");
+      jQuery(document).ready(function ($) {
+        const blogCreationDescription =
+          localStorage.getItem("blogCreationDescription") ||
+          "Description (Required)";
+        $("#editor").val(blogCreationDescription);
+
+        $("#editor").markdownEditor({
+          preview: true,
+          onPreview: function (content, callback) {
+            callback(marked.parse(content));
+          },
+        });
+
+        document.querySelector("textarea").style.padding = "10px";
+      });
+
+      const interval = setInterval((v) => {
+        const desc = $("#editor").val();
+        if (!desc) return localStorage.removeItem("blogCreationDescription");
+        localStorage.setItem("blogCreationDescription", desc);
+      }, 5000);
+
+      const parseCookie = (str) =>
+        str
+          .split(";")
+          .map((v) => v.split("="))
+          .reduce((acc, v) => {
+            acc[decodeURIComponent(v[0].trim())] = decodeURIComponent(
+              v[1].trim()
+            );
+            return acc;
+          }, {});
+      const cookies = parseCookie(document.cookie);
+
+      $("form").on("submit", async (ev) => {
+        submitBtnContainer.innerHTML = `<button class="submit-btn" disabled>
+            <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+            <span>Handling...</span>
+          </button>`;
+        const description = $("#editor").val();
+        const title = $("form input.inputTitle").val();
+        ev.preventDefault();
+        let data;
+        try {
+          data = await $.ajax({
+            url: "http://localhost:3000/api/blogs/",
+            method: "POST",
+            accepts: "application/json",
+            contentType: "application/json",
+            headers: {
+              authorization:
+                "<%= cookies.accessToken %>" || cookies.accessToken,
+            },
+            dataType: "json",
+            data: JSON.stringify({
+              title,
+              description,
+              category: "Unsorted",
+            }),
+          });
+        } catch (err) {
+          console.log(err);
+          if (!err.responseJSON)
+            return alert("I couldn't connect to the server!");
+          return alert(err.responseJSON.message);
+        }
+
+        if (data.statusCode >= 200 && data.statusCode < 300) {
+          clearInterval(interval);
+          localStorage.removeItem("blogCreationDescription");
+          submitBtnContainer.innerHTML = `<button class="submit-btn" disabled>
+            <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+            <span>Redirecting...</span>
+          </button>`;
+          location.href = `/blogs/${data.id}`;
+        } else {
+          alert("Blog is not created successfully");
+          submitBtnContainer.innerHTML = `<button class="submit-btn">
+            <span><i class="fa-regular fa-calendar-plus"></i></span>
+            <span>Create a blog</span>
+          </button>`;
+        }
       });
     });
   </script>
@@ -34,5 +125,26 @@
   .title {
     text-align: center;
     font-weight: bold;
+  }
+
+  .inputTitle {
+    width: 100%;
+    border-radius: 5px;
+    height: 40px;
+    border: 1px solid #d3d3d3;
+    padding: 10px;
+    margin-bottom: 20px;
+  }
+
+  .submit-btn {
+    margin-bottom: 50px;
+    width: 100%;
+    margin-top: 20px;
+    height: 38px;
+    border-radius: 50px;
+  }
+
+  .submit-btn:hover {
+    opacity: 0.7;
   }
 </style>

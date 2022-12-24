@@ -174,3 +174,12 @@
 .dot-flasing > div:last-child {
   animation-delay: 0.6s;
 }
+
+.submit-btn {
+  border-radius: 50px;
+  background-color: rgb(10, 241, 241);
+  border: 1px solid rgb(10, 241, 241);
+  color: black;
+  font-weight: 500;
+}
+
