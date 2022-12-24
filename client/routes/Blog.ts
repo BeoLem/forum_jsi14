@@ -1,8 +1,13 @@
-import express from 'express'
+import express from "express";
 import { AuthUser } from "../middlewares/Auth";
-import { GetCreateBlogPage } from '../controllers/Blog';
+import {
+  GetBlogListPage,
+  GetCreateBlogPage,
+  GetEditBlogPage,
+  GetSpecificBlogPage,
+} from "../controllers/Blog";
 
-const router = express.Router()
+const router = express.Router();
 
 /**
  * @route /blogs/create
@@ -11,6 +16,30 @@ const router = express.Router()
  * @desc Get the create blog page
  */
 router.get("/create", AuthUser(true), GetCreateBlogPage);
+
+/**
+ * @route /blogs/edit/:id
+ * @method get
+ * @access public
+ * @desc Get the edit blog page
+ */
+router.get("/edit/:id", AuthUser(true), GetEditBlogPage);
+
+/**
+ * @route /blogs/edit/:id
+ * @method get
+ * @access public
+ * @desc Get the edit blog page
+ */
+router.get("/:id", AuthUser(true), GetSpecificBlogPage);
+
+/**
+ * @route /blogs/
+ * @method get
+ * @access public
+ * @desc Get the edit blog page
+ */
+router.get("/", AuthUser(true), GetBlogListPage);
 
 // /**
 //  * @route /blogs/:id
@@ -47,4 +76,4 @@ router.get("/create", AuthUser(true), GetCreateBlogPage);
 //  */
 // router.get('/:id', GetSpecificBlog)
 
-export = router
+export = router;

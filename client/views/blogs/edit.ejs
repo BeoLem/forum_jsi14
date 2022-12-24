@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title><%= page.title %></title>
+    <%- include('../partials/components.ejs') %> <%-
+    include('../partials/markdown.ejs') %>
+  </head>
+  <body>
+    <div class="toasts"></div>
+    <div class="container">
+      <form id="form">
+        <h3 class="title">Edit the blog</h3>
+        <input
+          type="text"
+          title="Blog Title"
+          value="hello"
+          required
+          class="inputTitle"
+        />
+        <textarea name="text" id="editor"></textarea>
+
+        <div class="w-100" id="btn-container">
+          <button class="submit-btn">
+            <span><i class="fa-solid fa-pen-to-square"></i></span>
+            <span>Edit the blog</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </body>
+  <script type="text/javascript">
+    document.addEventListener("DOMContentLoaded", async () => {
+      showLoadingIcon();
+      const submitBtnContainer = document.querySelector("#btn-container");
+
+      const id = "<%= blogId %>" || "<%= params.id %>";
+
+      try {
+        blogFetchData = await $.ajax({
+          url: `/api/blogs/${id}`,
+          method: "GET",
+          accepts: "application/json",
+          contentType: "application/json",
+        });
+      } catch (err) {
+        console.log(err);
+        if (!err.responseJSON)
+          return alert("I couldn't connect to the server!");
+        return alert(err.responseJSON.message);
+      }
+
+      const blog = blogFetchData.data;
+
+      console.log(blog);
+
+      if (blog.author != "<%= locals.user.id %>") {
+        alert("You are not the author of this blog!");
+        return (location.href = `/blogs/${blog.id}`);
+      }
+
+      $("input.inputTitle").val(blog.title);
+
+      jQuery(document).ready(function ($) {
+        $("#editor").val(blog.description);
+
+        $("#editor").markdownEditor({
+          preview: true,
+          onPreview: function (content, callback) {
+            callback(marked.parse(content));
+          },
+        });
+
+        document.querySelector("textarea").style.padding = "10px";
+      });
+
+      hideLoadingIcon();
+
+      const parseCookie = (str) =>
+        str
+          .split(";")
+          .map((v) => v.split("="))
+          .reduce((acc, v) => {
+            acc[decodeURIComponent(v[0].trim())] = decodeURIComponent(
+              v[1].trim()
+            );
+            return acc;
+          }, {});
+      const cookies = parseCookie(document.cookie);
+
+      $("form").on("submit", async (ev) => {
+        const description = $("#editor").val();
+        const title = $("form input.inputTitle").val();
+        if (!title || !description)
+          return alert(
+            "Please fill in all of the required fields before editing the blog"
+          );
+        submitBtnContainer.innerHTML = `<button class="submit-btn" disabled>
+            <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+            <span>Handling...</span>
+          </button>`;
+        ev.preventDefault();
+        let data;
+        try {
+          data = await $.ajax({
+            url: `/api/blogs/${id}`,
+            method: "PATCH",
+            accepts: "application/json",
+            contentType: "application/json",
+            headers: {
+              authorization:
+                "<%= cookies.accessToken %>" || cookies.accessToken,
+            },
+            dataType: "json",
+            data: JSON.stringify({
+              title,
+              description,
+            }),
+          });
+        } catch (err) {
+          console.log(err);
+          submitBtnContainer.innerHTML = `<button class="submit-btn">
+            <span><i class="fa-solid fa-pen-to-square"></i></span>
+            <span>Edit a blog</span>
+          </button>`;
+          if (!err.responseJSON)
+            return alert("I couldn't connect to the server!");
+          return alert(err.responseJSON.message);
+        }
+
+        if (data.statusCode >= 200 && data.statusCode < 300) {
+          localStorage.removeItem("blogEditDescription");
+          submitBtnContainer.innerHTML = `<button class="submit-btn" disabled>
+            <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+            <span>Redirecting...</span>
+          </button>`;
+          location.href = `/blogs/${data.id}`;
+        } else {
+          alert("The blog is not edited successfully");
+          submitBtnContainer.innerHTML = `<button class="submit-btn">
+            <span><i class="fa-solid fa-pen-to-square"></i></span>
+            <span>Edit a blog</span>
+          </button>`;
+        }
+      });
+    });
+  </script>
+</html>
+
+<style>
+  .title {
+    text-align: center;
+    font-weight: bold;
+  }
+
+  .inputTitle {
+    width: 100%;
+    border-radius: 5px;
+    height: 40px;
+    border: 1px solid #d3d3d3;
+    padding: 10px;
+    margin-bottom: 20px;
+  }
+
+  .submit-btn {
+    margin-bottom: 50px;
+    width: 100%;
+    margin-top: 20px;
+    height: 38px;
+    border-radius: 50px;
+  }
+
+  .submit-btn:hover {
+    opacity: 0.7;
+  }
+</style>

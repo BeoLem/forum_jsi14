@@ -6,7 +6,6 @@
 
 * {
   font-family: "Nunito Sans", sans-serif;
-  font-weight: bold;
   margin: 0;
   padding: 0;
   box-sizing: border-box;
@@ -28,7 +27,7 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  top: -30px;
+  top: 0;
 }
 
 .music-waves-2 {

@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title><%= page.title %></title>
+    <%- include('../partials/components.ejs') %>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/marked/4.2.4/marked.min.js"
+      integrity="sha512-nwWBb9WFoP7Q0hkeTjUPmHkkYLnmYgYnZ8PvQVVL2XJ9RLCGuLqKe86bhmZ3CJXGU8F777uuPkDQTkZ2qAuyvA=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    ></script>
+  </head>
+  <body>
+    <div class="interaction">
+      <%- include('../partials/sidebar.ejs') %>
+      <div id="content">
+        <div id="header">
+          <span
+            >Posted by
+            <a class="username" href="/users/contentHeaderUsername"></a> |
+          </span>
+          <span
+            class="timestamp"
+            data-bs-toggle="tooltip"
+            data-bs-placement="bottom"
+            title="Tooltip on bottom"
+          ></span>
+        </div>
+
+        <div id="main">
+          <h3 class="title"></h3>
+          <div class="description"></div>
+        </div>
+      </div>
+    </div>
+  </body>
+  <script type="text/javascript">
+    document.addEventListener("DOMContentLoaded", () => {
+      jQuery(document).ready(async function ($) {
+        // showLoadingIcon();
+
+        const id = "<%= blogId %>" || "<%= params.id %>";
+
+        try {
+          blogFetchData = await $.ajax({
+            url: `/api/blogs/${id}`,
+            method: "GET",
+            accepts: "application/json",
+            contentType: "application/json",
+          });
+        } catch (err) {
+          console.log(err);
+          if (!err.responseJSON)
+            return alert("I couldn't connect to the server!");
+          return alert(err.responseJSON.message);
+        }
+
+        const blog = blogFetchData.data;
+
+        console.log(blog);
+
+        const postedDate = new Date(0);
+        postedDate.setUTCSeconds(blog.timestamp.seconds);
+
+        // Bootstrap Tooltip
+        var timestampSpan = document.querySelector(
+          "#content #header .timestamp"
+        );
+        timestampSpan.innerHTML = ElapsedTimeConverter(postedDate);
+        timestampSpan.title = postedDate;
+        new bootstrap.Tooltip(timestampSpan);
+
+        // Edit username
+        var headerUsername = document.querySelector("#content #header span a");
+        var authorName = "";
+
+        try {
+          authorFetchData = await $.ajax({
+            url: `/api/users/${blog.author}`,
+            method: "GET",
+            accepts: "application/json",
+            contentType: "application/json",
+          });
+        } catch (err) {
+          console.log(err);
+          if (!err.responseJSON)
+            return alert("I couldn't connect to the server!");
+          return alert(err.responseJSON.message);
+          authorName = `Unknown`;
+        }
+
+        authorName = authorFetchData.user.username;
+        headerUsername.innerText = authorName;
+        headerUsername.href = headerUsername.href.replace(
+          "contentHeaderUsername",
+          blog.author
+        );
+
+        // Edit title
+        document.querySelector("#main .title").innerHTML = marked.parse(
+          blog.title
+        );
+
+        // Edit description
+        document.querySelector("#main .description").innerHTML = marked.parse(
+          blog.description
+        );
+
+        // Edit image css
+        const maxDescriptionWidthContainer =
+          document.querySelector("#main .description").clientWidth - 100 + "px";
+        console.log(maxDescriptionWidthContainer);
+        document.querySelectorAll("img").forEach((v) => {
+          v.style.maxWidth = maxDescriptionWidthContainer;
+        });
+      });
+    });
+  </script>
+</html>
+
+<style>
+  #content #header {
+    margin-bottom: 20px;
+  }
+
+  #main .title {
+    margin-bottom: 20px;
+    font-weight: bold;
+  }
+
+  #main .description {
+    overflow-wrap: anywhere;
+  }
+
+  #content #header span a {
+    text-decoration: none;
+  }
+
+  #content #header span a:hover {
+    text-decoration: underline;
+  }
+</style>

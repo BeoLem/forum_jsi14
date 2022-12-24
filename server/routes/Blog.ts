@@ -2,6 +2,7 @@ import express from 'express'
 import {
     CreateBlog,
     DeleteBlog,
+    EditBlog,
     GetBlogList,
     GetSpecificBlog,
 } from '../controllers/Blog'
@@ -64,6 +65,42 @@ router.delete(
     AuthUser(true),
     DeleteBlog
 )
+
+/**
+ * @route /blogs/:id
+ * @method patch
+ * @access public
+ * @desc Edit a blog
+ */
+router.patch(
+  "/:id",
+  ValidateHeader([
+    {
+      name: "authorization",
+      type: "string",
+      required: true,
+    },
+  ]),
+  ValidateBody([
+    {
+      name: "title",
+      type: "string",
+      required: false,
+    },
+    {
+      name: "description",
+      type: "string",
+      required: false,
+    },
+    {
+      name: "category",
+      type: "string",
+      required: false,
+    },
+  ]),
+  AuthUser(true),
+  EditBlog
+);
 
 /**
  * @route /blogs/@list

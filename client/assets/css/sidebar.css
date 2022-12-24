@@ -9,11 +9,13 @@
 #sidebar a {
   color: black;
   text-decoration: none;
+  font-weight: bold;
 }
 
 #sidebar p {
   margin: 0;
   padding: 0;
+  font-weight: bold;
 }
 
 .interaction {

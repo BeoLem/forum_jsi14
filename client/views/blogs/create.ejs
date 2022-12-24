@@ -69,17 +69,21 @@
       const cookies = parseCookie(document.cookie);
 
       $("form").on("submit", async (ev) => {
+        const description = $("#editor").val();
+        const title = $("form input.inputTitle").val();
+        if (!title || !description)
+          return alert(
+            "Please fill in all of the required fields before creating a blog"
+          );
         submitBtnContainer.innerHTML = `<button class="submit-btn" disabled>
             <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
             <span>Handling...</span>
           </button>`;
-        const description = $("#editor").val();
-        const title = $("form input.inputTitle").val();
         ev.preventDefault();
         let data;
         try {
           data = await $.ajax({
-            url: "http://localhost:3000/api/blogs/",
+            url: "/api/blogs/",
             method: "POST",
             accepts: "application/json",
             contentType: "application/json",
@@ -96,6 +100,10 @@
           });
         } catch (err) {
           console.log(err);
+          submitBtnContainer.innerHTML = `<button class="submit-btn">
+            <span><i class="fa-regular fa-calendar-plus"></i></span>
+            <span>Create a blog</span>
+          </button>`;
           if (!err.responseJSON)
             return alert("I couldn't connect to the server!");
           return alert(err.responseJSON.message);
