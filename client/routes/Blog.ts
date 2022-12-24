@@ -26,20 +26,20 @@ router.get("/create", AuthUser(true), GetCreateBlogPage);
 router.get("/edit/:id", AuthUser(true), GetEditBlogPage);
 
 /**
- * @route /blogs/edit/:id
+ * @route /blogs/:id
  * @method get
  * @access public
- * @desc Get the edit blog page
+ * @desc Get specific blog page
  */
-router.get("/:id", AuthUser(true), GetSpecificBlogPage);
+router.get("/:id", AuthUser(false), GetSpecificBlogPage);
 
 /**
  * @route /blogs/
  * @method get
  * @access public
- * @desc Get the edit blog page
+ * @desc Get the blog list page
  */
-router.get("/", AuthUser(true), GetBlogListPage);
+router.get("/", AuthUser(false), GetBlogListPage);
 
 // /**
 //  * @route /blogs/:id

@@ -75,7 +75,6 @@ export const EditBlog = async (req: Request, res: Response) => {
   let updated = {
     title: title || blog.title,
     description: description || blog.description,
-    timestamp: serverTimestamp()
   };
 
   await updateDoc(blogDocRef, updated);
