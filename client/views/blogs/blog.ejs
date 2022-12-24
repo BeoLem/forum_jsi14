@@ -104,16 +104,17 @@
           blog.title
         );
 
+        const maxDescriptionWidthContainer =
+          document.querySelector("#main .description").clientWidth - 100 + "px";
+
         // Edit description
         document.querySelector("#main .description").innerHTML = marked.parse(
           blog.description
         );
 
         // Edit image css
-        const maxDescriptionWidthContainer =
-          document.querySelector("#main .description").clientWidth - 100 + "px";
-        console.log(maxDescriptionWidthContainer);
         document.querySelectorAll("img").forEach((v) => {
+          console.log(v);
           v.style.maxWidth = maxDescriptionWidthContainer;
         });
       });
