@@ -1,5 +1,5 @@
 import express from "express";
-import { GetAboutUsPage, GetHomePage } from "../controllers/Root";
+import { GetAboutUsPage, GetErrorPage, GetHomePage } from "../controllers/Root";
 import { AuthUser } from "../middlewares/Auth";
 
 const router = express.Router();
@@ -13,11 +13,19 @@ const router = express.Router();
 router.get("/", AuthUser(false), GetHomePage);
 
 /**
- * @route /
+ * @route /about
  * @method get
  * @access public
- * @desc Home page
+ * @desc About Us page
  */
 router.get("/about", AuthUser(false), GetAboutUsPage);
+
+/**
+ * @route /error?status=&message=&title=&color=&redirect=
+ * @method get
+ * @access public
+ * @desc Error page
+ */
+router.get("/error", GetErrorPage);
 
 export = router;

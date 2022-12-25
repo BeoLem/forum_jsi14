@@ -21,15 +21,103 @@
           </button>
         </div>
 
+        <!-- <div class="filterTool">
+          <div class="blogAuthorFilter">
+            <i class="fa-solid fa-user"></i>
+            <span>User: </span>
+          </div>
+          <div class="blogCategoryFilter"></div>
+        </div> -->
+
         <div class="blogs"></div>
+        <button
+          class="submit-btn render-more-blogs"
+          onclick="blogButtonRender()"
+        >
+          <span><i class="fa-solid fa-folder-plus"></i></span>
+          <span>Show more blogs</span>
+        </button>
       </div>
     </div>
   </body>
   <script type="text/javascript">
-    function renderMoreBlog(array) {
-      array.map((v) => {
+    let totalBlogs = 1;
+    let requestMore = 10;
+
+    async function blogButtonRender() {
+      const showMoreBlogsBtn = $(".submit-btn.render-more-blogs");
+      showMoreBlogsBtn.html(`<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+              <span>Handling...</span>`);
+      showMoreBlogsBtn.attr("disabled", true);
+      let blogs = await getAndRenderBlogs();
+      if (blogs == false) displayErrorToast("I couldn't retrieve more blogs!");
+      showMoreBlogsBtn.html(`<span><i class="fa-solid fa-folder-plus"></i></span>
+          <span>Show more blogs</span>`);
+      showMoreBlogsBtn.attr("disabled", false);
+    }
+
+    async function getAndRenderBlogs() {
+      let blogs = await getMoreBlog();
+      if (!blogs) {
+        displayErrorToast("I couldn't retrieve more blogs!");
+        return false;
+      }
+      await renderMoreBlog(blogs);
+      return true;
+    }
+
+    async function getMoreBlog() {
+      let range = `${totalBlogs || 1}-${totalBlogs + requestMore || 10}`;
+      try {
+        blogsFetchData = await $.ajax({
+          url: `/api/blogs/@list?range=${range}`,
+          method: "GET",
+          accepts: "application/json",
+          contentType: "application/json",
+        });
+      } catch (err) {
+        console.log(err);
+        document.querySelector("#content").style.display = "none";
+        hideLoadingIcon();
+        if (!err.responseJSON) {
+          displayErrorToast("I couldn't connect to the server!");
+          return null;
+        }
+        displayErrorToast(err.responseJSON.message);
+        return null;
+      }
+
+      const blogs = blogsFetchData.data;
+
+      totalBlogs += blogs.length;
+
+      return blogs;
+    }
+
+    async function renderMoreBlog(array) {
+      await Promise.all(array.map(async (v) => {
         const postedDate = new Date(0);
         postedDate.setUTCSeconds(v.timestamp.seconds);
+
+        let usernameFetchData;
+        let username;
+
+        try {
+          usernameFetchData = await $.ajax({
+            url: `/api/users/${v.author}`,
+            method: "GET",
+            accepts: "application/json",
+            contentType: "application/json",
+          });
+        } catch (err) {
+          console.log(err);
+          if (!err.responseJSON)
+            return displayErrorToast("I couldn't connect to the server!");
+          return displayErrorToast(err.responseJSON.message);
+          username = `Unknown`;
+        }
+
+        username = usernameFetchData.user.username;
 
         document.querySelector(
           ".blogs"
@@ -37,9 +125,10 @@
           v.id
         }'">
             <div class="header">
+              <img class="avatar" src="https://avatars.dicebear.com/api/initials/${username}.svg" alt="">
               <span
                 >Posted by
-                <a class="username" href="/users/${v.author}">blam</a>
+                <a class="username" href="/users/${v.author}">${username}</a>
               </span>
               <span
                 class="timestamp"
@@ -54,31 +143,13 @@
               <h3 class="title">${v.title}</h3>
             </div>
           </div>`;
-      });
+      }));
     }
     document.addEventListener("DOMContentLoaded", () => {
       jQuery(document).ready(async function ($) {
         showLoadingIcon();
 
-        try {
-          blogsFetchData = await $.ajax({
-            url: `/api/blogs/@list?range=1-10`,
-            method: "GET",
-            accepts: "application/json",
-            contentType: "application/json",
-          });
-        } catch (err) {
-          console.log(err);
-          document.querySelector("#content").style.display = "none";
-          hideLoadingIcon();
-          if (!err.responseJSON)
-            return displayErrorToast("I couldn't connect to the server!");
-          return displayErrorToast(err.responseJSON.message);
-        }
-
-        const blogs = blogsFetchData.data;
-
-        renderMoreBlog(blogs);
+        await getAndRenderBlogs();
 
         hideLoadingIcon();
       });
@@ -87,7 +158,7 @@
 </html>
 
 <style>
-  .create-btn {
+  .submit-btn {
     margin-bottom: 50px;
     width: 100%;
     margin-top: 20px;
@@ -101,6 +172,12 @@
     padding: 10px;
     cursor: pointer;
     margin-bottom: 20px;
+  }
+
+  .blog .avatar {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
   }
 
   .blog:hover {

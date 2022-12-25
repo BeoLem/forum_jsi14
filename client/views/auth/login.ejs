@@ -125,12 +125,10 @@
       form.onsubmit = async () => {
         event.preventDefault();
         document.querySelector("#btn-container").innerHTML = `
-        <div class="w-100" id="btn-container">
             <button class="btn submit-btn btn-primary w-100" type="submit" disabled>
               <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
               <span>Handling...</span>
             </button>
-          </div>
     `;
         let request;
         try {

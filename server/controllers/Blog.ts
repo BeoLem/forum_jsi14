@@ -111,7 +111,7 @@ export const GetBlogList = async (req: Request, res: Response) => {
   const ref = collection(database, "blogs").withConverter(BlogConverter);
 
   const range =
-    queries.range && typeof queries.range == "string" ? queries.range : "1-10";
+    (queries.range && typeof queries.range == "string") ? queries.range : "1-10";
 
   let maxRange = parseInt(range.split("-")[1]);
   let minRange = parseInt(range.split("-")[0]);

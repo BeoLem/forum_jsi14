@@ -36,6 +36,18 @@ app.use('/blogs', BlogRouter)
 app.use('/', RootRouter)
 app.use('/assets', express.static(path.join(__dirname, 'assets')))
 
+app.use(function(req, res, next) {
+    res.render("web/error.ejs", {
+      page: {
+        status: 404,
+        message: "You're lost",
+        title: "CFrum | Not Found",
+        color: "red",
+        redirect: "/"
+      },
+    });
+})
+
 // Application Configurations
 app.set('view engine', 'ejs')
 app.set('views', path.join(__dirname, 'views'))

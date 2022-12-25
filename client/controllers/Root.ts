@@ -20,3 +20,15 @@ export const GetAboutUsPage = async (req: Request, res: Response) => {
     },
   });
 };
+
+export const GetErrorPage = async (req: Request, res: Response) => {
+  res.render("web/error", {
+    page: {
+      status: req.query.status || "404",
+      message: req.query.message || "Not Found",
+      title: req.query.title || 'CFrum | Not Found',
+      color: req.query.color || "red",
+      redirect: req.query.redirect || "/"
+    },
+  });
+}

@@ -6,7 +6,6 @@ import { JWTCheck } from "../utils/Checking";
 import fetch from "node-fetch";
 import { CUser } from "../documents/User";
 import { CSession } from "../documents/Session";
-import { getHost } from "../utils/URL";
 
 export let AuthUser = (
   stopIfNotAuth: true | false = true,
@@ -16,7 +15,7 @@ export let AuthUser = (
     if ((!token || !JWTCheck(token)) && stopIfNotAuth) {
       res.clearCookie("accessToken");
       return res.redirect(
-        "/auth/login?notification=Please log in to continue"
+        "/error?message=Unauthorized&status=401&title=CFrum%20|%20Unauthorized&color=aqua&redirect=/auth/login"
       );
     }
 
@@ -36,7 +35,9 @@ export let AuthUser = (
       );
     } catch (err) {
       logger.error(err);
-      return res.redirect("/auth/login?error=Couldn't verify your identity");
+      return res.redirect(
+        "/error?message=Unauthorized&status=401&title=CFrum%20|%20Unauthorized&color=aqua&redirect=/auth/login"
+      );
     }
 
     accessSessionData =
@@ -65,7 +66,9 @@ export let AuthUser = (
         } catch (err) {
           logger.error(err);
           res.clearCookie("accessToken");
-          return res.redirect("/auth/login?error=Couldn't verify your identity");
+          return res.redirect(
+            "/error?message=Unauthorized&status=401&title=CFrum%20|%20Unauthorized&color=aqua&redirect=/auth/login"
+          );
         }
 
         let newAccTokenData =
@@ -84,14 +87,14 @@ export let AuthUser = (
           res.clearCookie("accessToken");
           if (stopIfNotAuth)
             return res.redirect(
-              "/auth/login?notification=Your session is expired"
+              "/error?message=Unauthorized&status=401&title=CFrum%20|%20Unauthorized&color=aqua&redirect=/auth/login"
             );
         }
       } else {
         res.clearCookie("accessToken");
         if (stopIfNotAuth)
           return res.redirect(
-            "/auth/login?notification=Your session is expired"
+            "/error?message=Unauthorized&status=401&title=CFrum%20|%20Unauthorized&color=aqua&redirect=/auth/login"
           );
       }
     }

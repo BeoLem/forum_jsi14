@@ -18,6 +18,7 @@
       <%- include('../partials/sidebar.ejs') %>
       <div id="content">
         <div id="header">
+          <img class="avatar" src="" alt="">
           <span
             >Posted by
             <a class="username" href="/users/contentHeaderUsername"></a>
@@ -30,27 +31,33 @@
           ></span>
         </div>
 
-        <div class="authorToolOnly" style="display: none">
-          <button
-            class="editButton"
-            onclick="location.href = '/blogs/edit/<%= params.id %>'"
-            onmouseover="this.style.cursor = 'pointer'"
-          >
-            <i class="fa-solid fa-pen-to-square"></i> Edit
-          </button>
-          <button
-            class="deleteButton"
-            title="Delete this blog"
-            onclick="deleteBlog()"
-            onmouseover="this.style.cursor = 'pointer'"
-          >
-            <i class="fa-solid fa-trash-can"></i> Delete
-          </button>
-        </div>
-
         <div id="main">
           <h3 class="title"></h3>
           <div class="description"></div>
+        </div>
+
+        <div class="tools">
+            <button
+              class="editButton authorOnly"
+              onclick="location.href = '/blogs/edit/<%= params.id %>'"
+              onmouseover="this.style.cursor = 'pointer'"
+            >
+              <i class="fa-solid fa-pen-to-square"></i> Edit
+            </button>
+            <button
+              class="deleteButton authorOnly"
+              title="Delete this blog"
+              onclick="deleteBlog()"
+              onmouseover="this.style.cursor = 'pointer'"
+            >
+              <i class="fa-solid fa-trash-can"></i> Delete
+            </button>
+            <button
+              class="commentButton"
+              onmouseover="this.style.cursor = 'pointer'"
+            >
+              <i class="fa-solid fa-comments"></i> Comment
+            </button>
         </div>
       </div>
     </div>
@@ -134,6 +141,9 @@
           blog.description
         );
 
+        // Edit avatar
+        document.querySelector("#content #header .avatar").src = `https://avatars.dicebear.com/api/initials/${authorName}.svg`
+
         // Edit image css
         document.querySelectorAll("img").forEach((v) => {
           console.log(v);
@@ -141,7 +151,7 @@
         });
 
         if (blog.author == "<%= locals.user.id %>") {
-          document.querySelector(".authorToolOnly").style.display = "block";
+          document.querySelectorAll(".authorOnly").forEach(v => v.style.display = "block")
         }
 
         hideLoadingIcon();
@@ -189,22 +199,20 @@
     margin-bottom: 20px;
   }
 
-  .authorToolOnly {
+  .tools {
     margin-bottom: 20px;
+    display: flex
   }
 
-  .authorToolOnly button {
+  .tools button {
     background-color: white;
-    padding: 3px;
+    padding: 5px;
     border: none;
+    margin-right: 5px;
   }
 
-  .authorToolOnly button:hover {
+  .tools button:hover {
     background-color: #d3d3d3;
-  }
-
-  #content #header .authorToolOnly {
-    margin-left: 50px;
   }
 
   #main .title {
@@ -216,11 +224,21 @@
     overflow-wrap: anywhere;
   }
 
+  #content #header .avatar {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+  }
+
   #content #header span a {
     text-decoration: none;
   }
 
   #content #header span a:hover {
     text-decoration: underline;
+  }
+
+  .authorOnly {
+    display: none
   }
 </style>

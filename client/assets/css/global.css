@@ -19,7 +19,7 @@
 
 .loading_icon {
   background: white;
-  z-index: 2;
+  z-index: 3;
   position: fixed;
   min-width: 100%;
   min-height: 100%;

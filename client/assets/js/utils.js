@@ -55,6 +55,7 @@ function showLoadingIcon() {
     loadingIconContainer = document.querySelector(".loading_icon");
     return showLoadingIcon();
   }
+  loadingIconContainer
   loadingIconContainer.innerHTML += `
       <div class="music-waves-2">
         <span></span>
@@ -70,7 +71,7 @@ function showLoadingIcon() {
 function hideLoadingIcon() {
   const loadingIconContainer = document.querySelector(".loading_icon");
   if (!loadingIconContainer) return;
-  loadingIconContainer.style.display = "none";
+  loadingIconContainer.remove();
 }
 
 const ElapsedTimeConverter = (timestamp) => {

@@ -1,69 +1,101 @@
-import express from 'express'
+import express from "express";
 import {
-    CreateBlog,
-    DeleteBlog,
-    GetBlogList,
-    GetSpecificBlog,
-} from '../controllers/Blog'
-import { AuthUser } from '../middlewares/Auth'
-import { ValidateBody, ValidateHeader } from '../middlewares/Validation'
+  GetBlogList,
+  GetSpecificBlog,
+} from "../controllers/Blog";
+import { CreateComment, DeleteComment, EditComment } from "../controllers/Comment";
+import { AuthUser } from "../middlewares/Auth";
+import { ValidateBody, ValidateHeader } from "../middlewares/Validation";
 
-const router = express.Router()
+const router = express.Router();
 
 /**
  * @route /comments/
  * @method post
- * @access public
+ * @access private
  * @desc Create a comment
  */
 router.post(
-    '/',
-    ValidateHeader([
-        {
-            name: 'authorization',
-            type: 'string',
-            required: true,
-        },
-    ]),
-    ValidateBody([
-        {
-            name: 'title',
-            type: 'string',
-            required: true,
-        },
-        {
-            name: 'description',
-            type: 'string',
-            required: true,
-        },
-        {
-            name: 'category',
-            type: 'string',
-            required: true,
-        },
-    ]),
-    AuthUser(true),
-    CreateBlog
-)
+  "/",
+  ValidateHeader([
+    {
+      name: "authorization",
+      type: "string",
+      required: true,
+    },
+  ]),
+  ValidateBody([
+    {
+      name: "id",
+      type: "string",
+      required: true,
+    },
+    {
+      name: "description",
+      type: "string",
+      required: true,
+    },
+  ]),
+  AuthUser(true),
+  CreateComment
+);
 
 /**
- * @route /comments/:id
+ * @route /comments/
  * @method delete
- * @access public
+ * @access private
  * @desc Delete a comment
  */
 router.delete(
-    '/:id',
-    ValidateHeader([
-        {
-            name: 'authorization',
-            type: 'string',
-            required: true,
-        },
-    ]),
-    AuthUser(true),
-    DeleteBlog
-)
+  "/",
+  ValidateHeader([
+    {
+      name: "authorization",
+      type: "string",
+      required: true,
+    },
+  ]),
+  ValidateBody([
+    {
+      name: "id",
+      type: "string",
+      required: true,
+    },
+  ]),
+  AuthUser(true),
+  DeleteComment
+);
+
+/**
+ * @route /comments/
+ * @method patch
+ * @access private
+ * @desc Edit a comment
+ */
+router.patch(
+  "/",
+  ValidateHeader([
+    {
+      name: "authorization",
+      type: "string",
+      required: true,
+    },
+  ]),
+  ValidateBody([
+    {
+      name: "id",
+      type: "string",
+      required: true,
+    },
+    {
+      name: "description",
+      type: "string",
+      required: true,
+    },
+  ]),
+  AuthUser(true),
+  EditComment
+);
 
 /**
  * @route /comments/@list
@@ -71,7 +103,7 @@ router.delete(
  * @access public
  * @desc Get comment list
  */
-router.get('/@list', GetBlogList)
+router.get("/@list", GetBlogList);
 
 /**
  * @route /comments/:id
@@ -79,6 +111,6 @@ router.get('/@list', GetBlogList)
  * @access public
  * @desc Get a comment
  */
-router.get('/:id', GetSpecificBlog)
+router.get("/:id", GetSpecificBlog);
 
-export = router
+export = router;

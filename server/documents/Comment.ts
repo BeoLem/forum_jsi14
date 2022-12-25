@@ -5,6 +5,6 @@ export class CComment {
         public commenter: string,
         public timestamp: FieldValue,
         public description: string,
-        public post: string
+        public blog: string
     ) {}
 }
