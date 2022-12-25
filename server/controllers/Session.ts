@@ -15,6 +15,7 @@ import { CreateRespond } from '../utils/Response'
 import { ComparePassword, GenerateToken, VerifyToken } from '../utils/Session'
 
 export const CreateSession = async (req: Request, res: Response) => {
+    try {
     const username = (req.body!.username as string).toLowerCase()
     const password = req.body!.password as string
 
@@ -66,9 +67,17 @@ export const CreateSession = async (req: Request, res: Response) => {
             accessToken: accToken.token,
         })
     )
+    } catch (err) {
+    return res.send(
+      CreateRespond(`${err}`, 503, {
+        error: err,
+      })
+    );
+  }
 }
 
 export const GetCurrentSession = async (req: Request, res: Response) => {
+    try {
     res.send(
         CreateRespond(null, 200, {
             session: res.locals.session || null,
@@ -76,9 +85,17 @@ export const GetCurrentSession = async (req: Request, res: Response) => {
             refreshSession: res.locals.refreshSession,
         })
     )
+    } catch (err) {
+    return res.send(
+      CreateRespond(`${err}`, 503, {
+        error: err,
+      })
+    );
+  }
 }
 
 export const DeleteSession = async (req: Request, res: Response) => {
+    try {
     const accTokenDoc = doc(database, 'sessions', res.locals.session!.id)
     const refTokenDoc = doc(database, 'sessions', res.locals.refreshSession!.id)
 
@@ -86,73 +103,96 @@ export const DeleteSession = async (req: Request, res: Response) => {
     await deleteDoc(refTokenDoc)
 
     res.send(CreateRespond('Session deleted', 200))
+    } catch (err) {
+    return res.send(
+      CreateRespond(`${err}`, 503, {
+        error: err,
+      })
+    );
+  }
 }
 
 // export const DeleteAllSessions = async (req: Request, res: Response) => {}
 
 export const RegenerateAccessToken = async (req: Request, res: Response) => {
-    const refToken = req.headers['refreshtoken']
-    if (!refToken || typeof refToken != 'string')
+    try {
+      const refToken = req.headers["refreshtoken"];
+      if (!refToken || typeof refToken != "string")
         return res
-            .status(400)
-            .send(CreateRespond('Refresh Token field is not provided', 400))
+          .status(400)
+          .send(CreateRespond("Refresh Token field is not provided", 400));
 
-    let refData
+      let refData;
 
-    try {
-        refData = await VerifyToken(refToken)
-    } catch (err) {
-        return res.status(401).send(CreateRespond(`Invalid token`, 401))
-    }
+      try {
+        refData = await VerifyToken(refToken);
+      } catch (err) {
+        return res.status(401).send(CreateRespond(`Invalid token`, 401));
+      }
 
-    if (!refData || !refData.user || !refData.session)
-        return res.status(401).send(CreateRespond(`Invalid token`, 401))
+      if (!refData || !refData.user || !refData.session)
+        return res.status(401).send(CreateRespond(`Invalid token`, 401));
 
-    let accRefs = await getDocs(
+      let accRefs = await getDocs(
         query(
-            collection(database, 'sessions'),
-            where('user', '==', refData?.user.id || ''),
-            where('type', '==', 'accessToken'),
-            where('tokenParent', '==', refData?.session?.id || '')
+          collection(database, "sessions"),
+          where("user", "==", refData?.user.id || ""),
+          where("type", "==", "accessToken"),
+          where("tokenParent", "==", refData?.session?.id || "")
         )
-    )
+      );
 
-    if (!accRefs.empty) {
+      if (!accRefs.empty) {
         await Promise.all(
-            accRefs.docs.map(async (snapshot) => {
-                await deleteDoc(doc(database, 'sessions', snapshot.id))
-            })
-        )
-    }
+          accRefs.docs.map(async (snapshot) => {
+            await deleteDoc(doc(database, "sessions", snapshot.id));
+          })
+        );
+      }
 
-    let accToken
+      let accToken;
 
-    try {
+      try {
         accToken = await GenerateToken(
-            refData?.user.id || '',
-            'accessToken',
-            refData?.session!.id || ''
+          refData?.user.id || "",
+          "accessToken",
+          refData?.session!.id || ""
+        );
+      } catch (err) {
+        return res.status(401).send(CreateRespond(`${err}`, 401));
+      }
+
+      let newAccDoc = await getDoc(
+        doc(database, "sessions", accToken.session.id).withConverter(
+          SessionConverter
         )
-    } catch (err) {
-        return res.status(401).send(CreateRespond(`${err}`, 401))
-    };
+      );
+      let newAccData = newAccDoc?.data() || null;
+      let userDoc = await getDoc(
+        doc(database, "users", newAccData?.user || "").withConverter(
+          UserConverter
+        )
+      );
+      let userData = userDoc?.data() || null;
 
-    let newAccDoc = await getDoc(doc(database, 'sessions', accToken.session.id).withConverter(SessionConverter));
-    let newAccData = newAccDoc?.data() || null;
-    let userDoc = await getDoc(doc(database, 'users', newAccData?.user || "").withConverter(UserConverter));
-    let userData = userDoc?.data() || null;
-
-    res.send(
-        CreateRespond('Successfully', 200, {
-            accessToken: accToken?.token,
-            accessSessionData: {
-                ...newAccData,
-                id: newAccDoc.id
-            },
-            userData: {
-                ...userData,
-                id: userDoc.id
-            }
+      res.send(
+        CreateRespond("Successfully", 200, {
+          accessToken: accToken?.token,
+          accessSessionData: {
+            ...newAccData,
+            id: newAccDoc.id,
+          },
+          userData: {
+            ...userData,
+            id: userDoc.id,
+          },
         })
-    )
+      );
+    } catch (err) {
+      return res.send(
+        CreateRespond(`${err}`, 503, {
+          error: err,
+        })
+      );
+    }
 }

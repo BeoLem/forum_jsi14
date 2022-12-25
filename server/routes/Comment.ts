@@ -1,9 +1,5 @@
 import express from "express";
-import {
-  GetBlogList,
-  GetSpecificBlog,
-} from "../controllers/Blog";
-import { CreateComment, DeleteComment, EditComment } from "../controllers/Comment";
+import { CreateComment, DeleteComment, EditComment, GetCommentList, GetSpecificComment } from "../controllers/Comment";
 import { AuthUser } from "../middlewares/Auth";
 import { ValidateBody, ValidateHeader } from "../middlewares/Validation";
 
@@ -103,7 +99,17 @@ router.patch(
  * @access public
  * @desc Get comment list
  */
-router.get("/@list", GetBlogList);
+router.get(
+  "/@list",
+  ValidateBody([
+    {
+      name: "blogId",
+      type: "string",
+      required: true,
+    },
+  ]),
+  GetCommentList
+);
 
 /**
  * @route /comments/:id
@@ -111,6 +117,6 @@ router.get("/@list", GetBlogList);
  * @access public
  * @desc Get a comment
  */
-router.get("/:id", GetSpecificBlog);
+router.get("/:id", GetSpecificComment);
 
 export = router;
