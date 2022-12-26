@@ -115,9 +115,8 @@
   function renderChosenItem() {
     const sidebarId = '<%= page.sidebarId || "" %>';
     if (!sidebarId) return;
-    const menuItem = document.querySelector(`.item#${sidebarId}`);
-    if (!menuItem) return;
-    menuItem.classList.add("chosen");
+    const menuItems = document.querySelectorAll(`.sidebarItem#${sidebarId}`);
+    menuItems.forEach(v => v.classList.add("chosen"));
   }
 
   function render() {

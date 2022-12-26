@@ -1,16 +1,16 @@
-import { FirebaseFieldValue } from '../typings/Firebase'
+import { FieldValue } from 'firebase/firestore'
 
 export class CUser {
     public username: string
     public password: string
-    public timestamp: FirebaseFieldValue
+    public timestamp: FieldValue
     public email: string
 
     constructor(
         username: string,
         password: string,
         email: string,
-        timestamp: FirebaseFieldValue
+        timestamp: FieldValue
     ) {
         this.username = username
         this.email = email
