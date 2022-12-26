@@ -66,9 +66,11 @@ function showLoadingIcon() {
         <span></span>
         <span></span>
       </div>`;
+  document.querySelector("*").style.overflow = "hidden";
 }
 
 function hideLoadingIcon() {
+  document.querySelector("*").style.overflow = "";
   const loadingIconContainer = document.querySelector(".loading_icon");
   if (!loadingIconContainer) return;
   loadingIconContainer.remove();

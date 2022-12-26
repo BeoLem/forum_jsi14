@@ -22,34 +22,34 @@
     </div>
   </div>
 
-  <div class="items">
-    <div class="item" id="home">
+  <div class="sidebarItems">
+    <div class="sidebarItem" id="home" onclick="location.href='/'">
       <i class="fa-solid fa-house"></i>
       <a href="/" class="name">Home</a>
     </div>
-    <div class="item" id="about">
+    <div class="sidebarItem" id="about" onclick="location.href='/about'">
       <i class="fa-solid fa-info"></i>
       <a href="/about" class="name">About Us</a>
     </div>
-    <div class="item" id="blog">
+    <div class="sidebarItem" id="blog" onclick="location.href='/blogs'">
       <i class="fa-solid fa-rss"></i>
       <a href="/blogs/" class="name">Blogs</a>
     </div>
-    <div class="item" id="user">
+    <div class="sidebarItem" id="user" onclick="location.href='/users'">
       <i class="fa-solid fa-user"></i>
       <a href="/users/" class="name">Users</a>
     </div>
-    <div class="item" id="settings">
+    <div class="sidebarItem" id="settings" onclick="location.href='/settings'">
       <i class="fa-solid fa-gear"></i>
       <a href="/settings/" class="name">Settings</a>
     </div>
     <% if (locals.user.username) { %>
-    <div class="item" id="logout">
+    <div class="sidebarItem" id="logout" onclick="location.href='/auth/logout'">
       <i class="fa-solid fa-right-from-bracket"></i>
       <a href="/auth/logout" class="name">Log Out</a>
     </div>
     <% } else { %>
-    <div class="item" id="login">
+    <div class="sidebarItem" id="login" onclick="location.href='/auth/login'">
       <i class="fa-solid fa-right-to-bracket"></i>
       <a href="/auth/login" class="name">Log In</a>
     </div>
@@ -58,6 +58,58 @@
 </div>
 
 <div id="fake-sidebar"></div>
+
+<div id="sidebar-responsive">
+  <i class="fa-solid fa-bars menu-icon"></i>
+  <h3 class="title">CFrum</h3>
+  <% if(locals.user.username) { %>
+  <img
+    class="avatar"
+    src="https://avatars.dicebear.com/api/initials/<%= locals.user?.username || 'Guest' %>.svg"
+    onerror="this.src = '/assets/imgs/avatar.png'"
+  />
+  <% } else { %>
+  <img
+    class="avatar"
+    src="/assets/imgs/avatar.png"
+    onerror="this.src = '/assets/imgs/avatar.png'"
+  />
+  <% } %>
+</div>
+
+<div id="sidebar-responsive-items" class="sidebarItems">
+    <div class="sidebarItem" id="home" onclick="location.href='/'">
+      <i class="fa-solid fa-house"></i>
+      <a href="/" class="name">Home</a>
+    </div>
+    <div class="sidebarItem" id="about" onclick="location.href='/about'">
+      <i class="fa-solid fa-info"></i>
+      <a href="/about" class="name">About Us</a>
+    </div>
+    <div class="sidebarItem" id="blog" onclick="location.href='/blogs'">
+      <i class="fa-solid fa-rss"></i>
+      <a href="/blogs/" class="name">Blogs</a>
+    </div>
+    <div class="sidebarItem" id="user" onclick="location.href='/users'">
+      <i class="fa-solid fa-user"></i>
+      <a href="/users/" class="name">Users</a>
+    </div>
+    <div class="sidebarItem" id="settings" onclick="location.href='/settings'">
+      <i class="fa-solid fa-gear"></i>
+      <a href="/settings/" class="name">Settings</a>
+    </div>
+    <% if (locals.user.username) { %>
+    <div class="sidebarItem" id="logout" onclick="location.href='/auth/logout'">
+      <i class="fa-solid fa-right-from-bracket"></i>
+      <a href="/auth/logout" class="name">Log Out</a>
+    </div>
+    <% } else { %>
+    <div class="sidebarItem" id="login" onclick="location.href='/auth/login'">
+      <i class="fa-solid fa-right-to-bracket"></i>
+      <a href="/auth/login" class="name">Log In</a>
+    </div>
+    <% } %>
+</div>
 
 <script>
   function renderChosenItem() {
@@ -73,6 +125,21 @@
   }
 
   render();
+
+  window.addEventListener("resize", () => {
+    if (
+      document.querySelector("#sidebar").clientHeight >
+      document.querySelector("html").clientHeight
+    ) {
+      document.querySelector("#sidebar").style.position = "relative";
+      document.querySelector("#fake-sidebar").style.display = "none";
+    }
+  });
+
+  // Handle Menu Icon
+  document.querySelector("#sidebar-responsive .menu-icon").addEventListener("click", () => {
+    document.querySelector("#sidebar-responsive-items").classList.toggle("active")
+  })
 </script>
 
 <!-- <div id="fake-sidebar"></div> -->

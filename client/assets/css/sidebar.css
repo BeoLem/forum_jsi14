@@ -4,14 +4,17 @@
   --parts-padding-top-bottom: 20px;
   --parts-padding-inline: 25px;
   --main-color: rgb(0, 191, 191);
+  --sidebar-background-color: #f8f9fb;
+  --sidebar-border-color: #d3d3d3;
 }
 
-#sidebar a {
+.sidebarItems a {
   color: black;
   text-decoration: none;
   font-weight: bold;
 }
 
+.sidebarItems p,
 #sidebar p {
   margin: 0;
   padding: 0;
@@ -24,15 +27,17 @@
 
 #sidebar {
   width: var(--sidebar-width);
+  min-width: var(--sidebar-width);
   min-height: 100%;
   position: fixed;
   padding: var(--parts-padding-top-bottom) var(--parts-padding-inline);
-  border-right: 1px solid #d3d3d3;
-  background-color: #f8f9fb;
+  border-right: 1px solid var(--sidebar-border-color);
+  background-color: var(--sidebar-background-color);
 }
 
 #fake-sidebar {
   width: var(--sidebar-width);
+  min-width: var(--sidebar-width);
   height: 100%;
   min-width: var(--sidebar-width);
   position: relative;
@@ -43,6 +48,14 @@
   padding: var(--parts-padding-top-bottom) var(--parts-padding-inline);
 }
 
+#sidebar-responsive-items {
+  display: none;
+}
+
+#sidebar-responsive {
+  display: none;
+}
+
 .header .user img {
   margin-right: 10px;
 }
@@ -50,19 +63,6 @@
 .header .title {
   text-align: center;
   font-weight: bold;
-}
-
-.items .item {
-  display: flex;
-  margin: 10px 0;
-  align-items: center;
-  height: var(--item-line-height);
-}
-
-.item i {
-  margin-right: 20px;
-  width: 20px;
-  height: 18px;
 }
 
 .header .user {
@@ -77,22 +77,138 @@
   border-radius: 50%;
 }
 
-#sidebar .item:hover i,
-#sidebar .item:hover a {
+.sidebarItems .sidebarItem {
+  display: flex;
+  margin: 10px 0;
+  align-items: center;
+  height: var(--item-line-height);
+  cursor: pointer;
+}
+
+.sidebarItem i {
+  margin-right: 20px;
+  width: 20px;
+  height: 18px;
+}
+
+.sidebarItem:hover i,
+.sidebarItem:hover a {
   color: var(--main-color);
 }
 
-.item.chosen i {
+.sidebarItem.chosen i {
   color: var(--main-color);
 }
 
-#sidebar .item.chosen a {
+.sidebarItem.chosen a {
   color: var(--main-color);
 }
 
-.item.chosen::before {
+.sidebarItem.chosen::before {
   content: "\25CF";
   color: var(--main-color);
   position: absolute;
   left: -5px;
+}
+
+@media screen and (max-width: 1000px) {
+  :root {
+    --sidebar-responsive-height: 80px;
+    --sidebar-width: 100%;
+  }
+
+  .interaction {
+    position: relative;
+  }
+
+  #sidebar {
+    display: none;
+  }
+
+  #fake-sidebar {
+    display: none;
+  }
+
+  #sidebar-responsive .menu-icon {
+    font-size: 20px;
+    cursor: pointer;
+  }
+
+  #sidebar-responsive .title {
+    font-size: 30px;
+    margin-bottom: 0;
+  }
+
+  #sidebar-responsive {
+    border-bottom: 1px solid var(--sidebar-border-color);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    position: fixed;
+    top: 0;
+    height: var(--sidebar-responsive-height);
+    background-color: var(--sidebar-background-color);
+    z-index: 2;
+    padding-inline: 10px;
+  }
+
+  #sidebar-responsive .avatar {
+    max-width: 32px;
+    max-height: 32px;
+    border-radius: 50%;
+  }
+
+  .interaction {
+    margin-top: var(--sidebar-responsive-height);
+    flex-direction: column;
+  }
+
+  #sidebar-responsive-items.active {
+    display: block;
+  }
+
+  #sidebar-responsive-items {
+    display: none /* default status */;
+    position: relative;
+    background-color: var(--sidebar-background-color);
+    border-bottom: 1px solid var(--sidebar-border-color);
+    width: var(--sidebar-width);
+    min-width: var(--sidebar-width);
+    padding: 0 var(--parts-padding-inline);
+  }
+
+  .sidebarItems .sidebarItem {
+    display: flex;
+    margin: 10px 0;
+    align-items: center;
+    height: var(--item-line-height);
+    cursor: pointer;
+  }
+
+  .sidebarItem i {
+    margin-right: 20px;
+    width: 20px;
+    height: 18px;
+  }
+
+  .sidebarItem:hover i,
+  .sidebarItem:hover a {
+    color: var(--main-color);
+  }
+
+  .sidebarItem.chosen i {
+    color: var(--main-color);
+  }
+
+  .sidebarItem.chosen a {
+    color: var(--main-color);
+  }
+
+  .sidebarItem.chosen::before {
+    content: "\25CF";
+    color: var(--main-color);
+    position: absolute;
+    left: -5px;
+  }
 }

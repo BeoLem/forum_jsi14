@@ -2,7 +2,6 @@ import { Request } from "express";
 import fetch from "node-fetch";
 import { Response } from "../typings/Response";
 import config from "config";
-import { getHost } from "../utils/URL";
 
 export const GetLoginPage = async (req: Request, res: Response) => {
   // if (res.locals.user?.id) return res.redirect('/auth/logout')
@@ -53,13 +52,11 @@ export const LogTheUserIn = async (req: Request, res: Response) => {
   const username = req.body.username;
   const password = req.body.password;
   if (!username || !password) {
-    return res.redirect(
-      "/auth/login?error=Please fill out all the required fields"
-    );
+    return res.status(400).send({
+      message: "Please fill in all the required fields.",
+      statusCode: 401,
+    });
   }
-  
-  console.log(``)
-  console.log(`${config.get("frontend.backend.path")}/sessions/`)
   
   let request;
   try {
@@ -122,9 +119,10 @@ export const CreateAnAccount = async (req: Request, res: Response) => {
   const username = req.body.username;
   const password = req.body.password;
   if (!username || !password) {
-    return res.redirect(
-      "/auth/register?error=Please fill out all the required fields"
-    );
+    return res.status(400).send({
+      message: "Please fill in all the required fields.",
+      statusCode: 401,
+    });
   }
 
   let request;

@@ -18,7 +18,7 @@
       <%- include('../partials/sidebar.ejs') %>
       <div id="content">
         <div id="header">
-          <img class="avatar" src="" alt="">
+          <img class="avatar" src="" alt="" />
           <span
             >Posted by
             <a class="username" href="/users/contentHeaderUsername"></a>
@@ -37,27 +37,27 @@
         </div>
 
         <div class="tools">
-            <button
-              class="editButton authorOnly"
-              onclick="location.href = '/blogs/edit/<%= params.id %>'"
-              onmouseover="this.style.cursor = 'pointer'"
-            >
-              <i class="fa-solid fa-pen-to-square"></i> Edit
-            </button>
-            <button
-              class="deleteButton authorOnly"
-              title="Delete this blog"
-              onclick="deleteBlog()"
-              onmouseover="this.style.cursor = 'pointer'"
-            >
-              <i class="fa-solid fa-trash-can"></i> Delete
-            </button>
-            <button
-              class="commentButton"
-              onmouseover="this.style.cursor = 'pointer'"
-            >
-              <i class="fa-solid fa-comments"></i> Comment
-            </button>
+          <button
+            class="editButton authorOnly"
+            onclick="location.href = '/blogs/edit/<%= params.id %>'"
+            onmouseover="this.style.cursor = 'pointer'"
+          >
+            <i class="fa-solid fa-pen-to-square"></i> Edit
+          </button>
+          <button
+            class="deleteButton authorOnly"
+            title="Delete this blog"
+            onclick="deleteBlog()"
+            onmouseover="this.style.cursor = 'pointer'"
+          >
+            <i class="fa-solid fa-trash-can"></i> Delete
+          </button>
+          <button
+            class="commentButton"
+            onmouseover="this.style.cursor = 'pointer'"
+          >
+            <i class="fa-solid fa-comments"></i> Comment
+          </button>
         </div>
       </div>
     </div>
@@ -129,20 +129,14 @@
         );
 
         // Edit title
-        document.querySelector("#main .title").innerHTML = marked.parse(
-          blog.title
-        );
+        document.querySelector("#main .title").innerHTML = blog.title;
 
         const maxDescriptionWidthContainer =
-          document.querySelector("#main .description").clientWidth - 100 + "px";
-
+          document.querySelector("#main").clientWidth + "px";
         // Edit description
         document.querySelector("#main .description").innerHTML = marked.parse(
           blog.description
         );
-
-        // Edit avatar
-        document.querySelector("#content #header .avatar").src = `https://avatars.dicebear.com/api/initials/${authorName}.svg`
 
         // Edit image css
         document.querySelectorAll("img").forEach((v) => {
@@ -150,8 +144,24 @@
           v.style.maxWidth = maxDescriptionWidthContainer;
         });
 
+        // Edit avatar
+        document.querySelector(
+          "#content #header .avatar"
+        ).src = `https://avatars.dicebear.com/api/initials/${authorName}.svg`;
+
+        window.addEventListener("resize", () => {
+          console.log(document.querySelector("#main").clientWidth + "px");
+          document.querySelectorAll("img").forEach((v) => {
+            console.log(v);
+            v.style.maxWidth =
+              document.querySelector("#main").clientWidth + "px";
+          });
+        });
+
         if (blog.author == "<%= locals.user.id %>") {
-          document.querySelectorAll(".authorOnly").forEach(v => v.style.display = "block")
+          document
+            .querySelectorAll(".authorOnly")
+            .forEach((v) => (v.style.display = "block"));
         }
 
         hideLoadingIcon();
@@ -164,7 +174,8 @@
       );
 
       if (!confirmation) return;
-      else if (confirmation != id) return alert("You provided the wrong ID!");
+      else if (confirmation != id)
+        return displayErrorToast("You provided the wrong ID!");
       try {
         deleteFetchData = await $.ajax({
           url: `/api/blogs/${id}`,
@@ -185,10 +196,10 @@
         deleteFetchData.statusCode >= 200 &&
         deleteFetchData.statusCode < 300
       ) {
-        alert("Deleted the blog successfully");
+        displayNotiToast("Deleted the blog successfully");
         location.href = "/";
       } else {
-        alert(deleteFetchData.message);
+        alertdisplayErrorToast(deleteFetchData.message);
       }
     }
   </script>
@@ -201,7 +212,7 @@
 
   .tools {
     margin-bottom: 20px;
-    display: flex
+    display: flex;
   }
 
   .tools button {
@@ -239,6 +250,6 @@
   }
 
   .authorOnly {
-    display: none
+    display: none;
   }
 </style>
