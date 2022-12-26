@@ -3,7 +3,7 @@ function displayErrorToast(message) {
   if (!toast_container) {
     let toastDiv = document.createElement("div");
     toastDiv.classList.add("toasts");
-    document.body.appendChild(toastDiv);
+    document.querySelector(".interaction").appendChild(toastDiv);
     toast_container = document.querySelector(".toasts");
   }
   toast_container.innerHTML += `
@@ -27,7 +27,7 @@ function displayNotiToast(message) {
   if (!toast_container) {
     let toastDiv = document.createElement("div");
     toastDiv.classList.add("toasts");
-    document.body.appendChild(toastDiv);
+    document.querySelector(".interaction").appendChild(toastDiv);
     toast_container = document.querySelector(".toasts");
   }
   toast_container.innerHTML += `
@@ -55,7 +55,7 @@ function showLoadingIcon() {
     loadingIconContainer = document.querySelector(".loading_icon");
     return showLoadingIcon();
   }
-  loadingIconContainer
+  loadingIconContainer;
   loadingIconContainer.innerHTML += `
       <div class="music-waves-2">
         <span></span>
