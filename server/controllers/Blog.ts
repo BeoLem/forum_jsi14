@@ -1,4 +1,3 @@
-import c from "config";
 import { Request } from "express";
 import {
   addDoc,
@@ -34,13 +33,15 @@ export const CreateBlog = async (req: Request, res: Response) => {
 
     const docRef = await addDoc(
       collection(database, "blogs").withConverter(BlogConverter),
-      new CBlog(
-        author?.id || "Unknown",
-        title,
-        serverTimestamp(),
-        description,
-        category
-      )
+      {
+        ...new CBlog(
+          author?.id || "Unknown",
+          title,
+          serverTimestamp(),
+          description,
+          category
+        ),
+      }
     );
 
     res.send(

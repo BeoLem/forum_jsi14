@@ -88,6 +88,11 @@
 
         const blog = blogFetchData.data;
 
+        if(!blog) {
+          hideLoadingIcon();
+          return displayErrorToast("I couldn't retrieve the blog information!");
+        }
+
         console.log(blog);
 
         const postedDate = new Date(0);

@@ -10,7 +10,7 @@ import logger from "./utils/Logger";
 import UserRouter from "./routes/User";
 import SessionRouter from "./routes/Session";
 import BlogRouter from "./routes/Blog";
-import CommentRouter from "./routes/Comment"
+import CommentRouter from "./routes/Comment";
 
 // Initialize the project
 const app = express();
@@ -46,6 +46,6 @@ app.use((req, res, next) => {
 app.use("/users", UserRouter);
 app.use("/sessions", SessionRouter);
 app.use("/blogs", BlogRouter);
-app.use("/comments", CommentRouter)
+app.use("/comments", CommentRouter);
 
 export { database, app };

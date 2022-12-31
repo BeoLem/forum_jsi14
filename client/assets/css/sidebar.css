@@ -170,7 +170,8 @@
 
   #sidebar-responsive-items {
     display: none /* default status */;
-    position: relative;
+    position: fixed;
+    z-index: 3;
     background-color: var(--sidebar-background-color);
     border-bottom: 1px solid var(--sidebar-border-color);
     width: var(--sidebar-width);

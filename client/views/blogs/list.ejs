@@ -89,6 +89,10 @@
       }
 
       const blogs = blogsFetchData.data;
+      if(!blogs) {
+        displayErrorToast("I couldn't retrieve any blogs! Please try again!")
+        return [];
+      }
 
       totalBlogs += blogs.length;
 
