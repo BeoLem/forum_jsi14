@@ -41,7 +41,6 @@
           <button
             class="editButton authorOnly"
             onclick="location.href = '/blogs/edit/<%= params.id %>'"
-            onmouseover="this.style.cursor = 'pointer'"
           >
             <i class="fa-solid fa-pen-to-square"></i> Edit
           </button>
@@ -49,16 +48,13 @@
             class="deleteButton authorOnly"
             title="Delete this blog"
             onclick="deleteBlog(this)"
-            onmouseover="this.style.cursor = 'pointer'"
           >
             <i class="fa-solid fa-trash-can"></i> Delete
           </button>
         </div>
 
         <div class="comments">
-          <form
-            id="commentHeader"
-          >
+          <form id="commentHeader">
             <% if(!locals.user.id) { %>
             <span>
               <a class="username" href="/auth/login">Log in</a>
@@ -76,11 +72,7 @@
               id="textComment"
               placeholder="What are your thoughts?"
             ></textarea>
-            <button
-              class="commentButton toolButton"
-              onmouseover="this.style.cursor = 'pointer'"
-              type="submit"
-            >
+            <button class="commentButton toolButton" type="submit">
               <i class="fa-solid fa-comments"></i> Comment
             </button>
             <% } %>
@@ -199,8 +191,8 @@
         // Comment Submit
         $("form#commentHeader").submit(() => {
           event.preventDefault();
-          createComment($(".commentButton.toolButton"))
-        })
+          createComment($(".commentButton.toolButton"));
+        });
       });
     });
 
@@ -255,11 +247,41 @@
       const value = textarea.val();
       if (!value || value == "")
         return displayErrorToast("Please fill in the description!");
-      try {
-        let data = await $.ajax()
-      } catch(err) {
 
+      textarea.attr("disabled", "disabled");
+      button.attr("disabled", "disabled");
+      button.html(`<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+              <span>Handling...</span>`);
+
+      let data;
+      try {
+        data = await $.ajax("<%= links.postComment %>", {
+          method: "POST",
+          accepts: "application/json",
+          data: JSON.stringify({
+            id,
+            description: value,
+          }),
+          contentType: "application/json",
+          headers: {
+            authorization: "<%= cookies.accessToken %>",
+          },
+        });
+      } catch (err) {
+        textarea.removeAttr("disabled");
+        button.removeAttr("disabled");
+        button.html(`<i class="fa-solid fa-comments"></i> Comment`);
+        console.log(err);
+        if (!err.responseJSON)
+          return displayErrorToast("I couldn't connect to the server!");
+        return displayErrorToast(err.responseJSON.message);
       }
+
+      textarea.removeAttr("disabled");
+      button.removeAttr("disabled");
+      button.html(`<i class="fa-solid fa-comments"></i> Comment`);
+      textarea.val("");
+      displayNotiToast("Comment posted!");
     }
   </script>
 </html>
@@ -287,8 +309,8 @@
     margin-bottom: 10px;
   }
 
-  .tools button:hover,
-  .toolButton:hover {
+  .tools button:not([disabled]):hover,
+  .toolButton:not([disabled]):hover {
     background-color: #d3d3d3;
   }
 

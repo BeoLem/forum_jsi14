@@ -39,7 +39,7 @@ export const GetSpecificBlogPage = async (req: Request, res: Response) => {
       sidebarId: "blog",
     },
     links: {
-      postComment: `${config.get("frontend.backend.path")}/comments/${req.params.id}`
+      postComment: `${config.get("frontend.backend.path")}/comments/`
     }
   });
 };
