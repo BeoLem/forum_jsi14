@@ -3,6 +3,7 @@ import { DocumentSnapshot, FieldValue } from "firebase/firestore";
 import { CSession } from "../documents/Session";
 import { CBlog } from "../documents/Blog";
 import { CComment } from "../documents/Comment";
+import { CReply } from "../documents/Reply";
 
 export const UserConverter = {
   toFirestore: (user: CUser) => {
@@ -73,15 +74,59 @@ export const CommentConverter = {
       timestamp: comment.timestamp,
       description: comment.description,
       blog: comment.blog,
+      likes: comment.likes,
+      dislikes: comment.dislikes,
     };
   },
   fromFirestore: (snapshot: DocumentSnapshot, options: any) => {
     const data = snapshot.data(options);
+    // let replies: CReply[] = [];
+    // data?.replies.map((v: CReply) =>
+    //   replies.push(
+    //     new CReply(
+    //       v.replier,
+    //       v.timestamp,
+    //       v.description,
+    //       v.likes,
+    //       v.dislikes,
+    //       v.replies
+    //     )
+    //   )
+    // );
     return new CComment(
       data?.commenter,
       data?.timestamp,
       data?.description,
-      data?.blog
+      data?.blog,
+      data?.likes,
+      data?.dislikes
+      // replies
+    );
+  },
+};
+
+export const ReplyConverter = {
+  toFirestore: (reply: CReply) => {
+    return {
+      replyTo: reply.replyTo,
+      replyToType: reply.replyToType,
+      replier: reply.replier,
+      timestamp: reply.timestamp,
+      description: reply.description,
+      likes: reply.likes,
+      dislikes: reply.dislikes,
+    };
+  },
+  fromFirestore: (snapshot: DocumentSnapshot, options: any) => {
+    const data = snapshot.data(options);
+    return new CReply(
+      data?.replyTo,
+      data?.replyToType,
+      data?.replier,
+      data?.timestamp,
+      data?.description,
+      data?.likes,
+      data?.dislikes
     );
   },
 };

@@ -52,7 +52,7 @@ export const CreateUser = async (req: Request, res: Response) => {
       })
     );
   } catch (err) {
-    return res.send(
+    return res.status(503).send(
       CreateRespond(`${err}`, 503, {
         error: err,
       })
@@ -100,7 +100,7 @@ export const GetUser = async (req: Request, res: Response) => {
       })
     );
   } catch (err) {
-    return res.send(
+    return res.status(503).send(
       CreateRespond(`${err}`, 503, {
         error: err,
       })
@@ -133,7 +133,7 @@ export const DeleteUser = async (req: Request, res: Response) => {
 
     res.send(CreateRespond("Account deleted", 200));
   } catch (err) {
-    return res.send(
+    return res.status(503).send(
       CreateRespond(`${err}`, 503, {
         error: err,
       })

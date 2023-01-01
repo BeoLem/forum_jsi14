@@ -11,6 +11,7 @@ import UserRouter from "./routes/User";
 import SessionRouter from "./routes/Session";
 import BlogRouter from "./routes/Blog";
 import CommentRouter from "./routes/Comment";
+import ReplyRouter from "./routes/Reply";
 
 // Initialize the project
 const app = express();
@@ -47,5 +48,6 @@ app.use("/users", UserRouter);
 app.use("/sessions", SessionRouter);
 app.use("/blogs", BlogRouter);
 app.use("/comments", CommentRouter);
+app.use("/replies", ReplyRouter);
 
 export { database, app };

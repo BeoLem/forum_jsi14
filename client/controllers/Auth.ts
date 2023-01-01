@@ -27,16 +27,13 @@ export const GetRegisterPage = async (req: Request, res: Response) => {
 
 export const LogOut = async (req: Request, res: Response) => {
   if (req.cookies["accessToken"]) {
-    fetch(
-      `${config.get("frontend.backend.path")}/sessions/`,
-      {
-        method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: req.cookies["accessToken"],
-        },
-      }
-    ).catch(() => {});
+    fetch(`${config.get("frontend.backend.path")}/sessions/`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: req.cookies["accessToken"],
+      },
+    }).catch(() => {});
 
     res.clearCookie("accessToken");
   } else;
@@ -57,27 +54,24 @@ export const LogTheUserIn = async (req: Request, res: Response) => {
       statusCode: 401,
     });
   }
-  
+
   let request;
   try {
-    request = await fetch(
-      `${config.get("frontend.backend.path")}/sessions/`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          username,
-          password,
-        }),
-      }
-    );
+    request = await fetch(`${config.get("frontend.backend.path")}/sessions/`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        username,
+        password,
+      }),
+    });
   } catch (err) {
     return res.status(401).send({
       message: "Couldn't connect to the server",
       statusCode: 401,
-    })
+    });
   }
 
   const data = (await request.json()) || JSON.parse(await request.text());
@@ -92,25 +86,22 @@ export const LogTheUserIn = async (req: Request, res: Response) => {
     res.status(200).send({
       message: "Logged in successfully",
       statusCode: 200,
-    })
+    });
 
     if (oldAccessToken) {
-      fetch(
-        `${config.get("frontend.backend.path")}/sessions/`,
-        {
-          method: "DELETE",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: oldAccessToken,
-          },
-        }
-      ).catch(() => {});
+      fetch(`${config.get("frontend.backend.path")}/sessions/`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: oldAccessToken,
+        },
+      }).catch(() => {});
     }
   } else {
     res.status(401).send({
       message: `${data.message}`,
       statusCode: 401,
-    })
+    });
   }
 };
 
@@ -127,25 +118,22 @@ export const CreateAnAccount = async (req: Request, res: Response) => {
 
   let request;
   try {
-    request = await fetch(
-      `${config.get("frontend.backend.path")}/users/`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          email,
-          username,
-          password,
-        }),
-      }
-    );
+    request = await fetch(`${config.get("frontend.backend.path")}/users/`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        email,
+        username,
+        password,
+      }),
+    });
   } catch (err) {
     return res.status(401).send({
       message: "Couldn't connect to the server",
       statusCode: 401,
-    })
+    });
   }
 
   const data = (await request.json()) || JSON.parse(await request.text());
@@ -153,12 +141,11 @@ export const CreateAnAccount = async (req: Request, res: Response) => {
     res.status(200).send({
       message: "Account created successfully",
       statusCode: 200,
-    })
+    });
   } else {
     res.status(401).send({
       message: `${data.message}`,
       statusCode: 401,
-    })
+    });
   }
 };
-

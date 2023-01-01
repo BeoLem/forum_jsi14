@@ -1,4 +1,4 @@
-import { Request } from "express";
+import e, { Request } from "express";
 import {
   addDoc,
   collection,
@@ -16,8 +16,13 @@ import {
 } from "firebase/firestore";
 import { database } from "../app";
 import { CComment } from "../documents/Comment";
+import { CReply } from "../documents/Reply";
 import { Response } from "../typings/Response";
-import { BlogConverter, CommentConverter } from "../utils/Converters";
+import {
+  BlogConverter,
+  CommentConverter,
+  ReplyConverter,
+} from "../utils/Converters";
 import { CreateRespond } from "../utils/Response";
 
 export const CreateComment = async (req: Request, res: Response) => {
@@ -40,7 +45,9 @@ export const CreateComment = async (req: Request, res: Response) => {
         res.locals.user?.id || "Unknown",
         serverTimestamp(),
         description,
-        blogId
+        blogId,
+        [],
+        []
       )
     );
 
@@ -64,7 +71,7 @@ export const CreateComment = async (req: Request, res: Response) => {
       })
     );
   } catch (err) {
-    return res.send(
+    return res.status(503).send(
       CreateRespond(`${err}`, 503, {
         error: err,
       })
@@ -94,7 +101,7 @@ export const DeleteComment = async (req: Request, res: Response) => {
 
     return res.send(CreateRespond("Comment deleted", 200));
   } catch (err) {
-    return res.send(
+    return res.status(503).send(
       CreateRespond(`${err}`, 503, {
         error: err,
       })
@@ -145,7 +152,7 @@ export const EditComment = async (req: Request, res: Response) => {
       })
     );
   } catch (err) {
-    return res.send(
+    return res.status(503).send(
       CreateRespond(`${err}`, 503, {
         error: err,
       })
@@ -211,7 +218,7 @@ export const GetCommentList = async (req: Request, res: Response) => {
       })
     );
   } catch (err) {
-    return res.send(
+    return res.status(503).send(
       CreateRespond(`${err}`, 503, {
         error: err,
       })
@@ -238,7 +245,7 @@ export const GetSpecificComment = async (req: Request, res: Response) => {
       })
     );
   } catch (err) {
-    return res.send(
+    return res.status(503).send(
       CreateRespond(`${err}`, 503, {
         error: err,
       })
