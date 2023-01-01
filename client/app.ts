@@ -23,8 +23,9 @@ app.use(
 )
 app.use((req, res, next) => {
     next()
+    console.log(req)
     logger.info(
-        `[${req.method.toUpperCase()}] [${req.socket.remoteAddress}] ${req.url}`
+        `[${req.method.toUpperCase()}] [${req.socket.remoteAddress}] ${req.baseUrl}`
     )
 })
 app.use(cookieParser())

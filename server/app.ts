@@ -32,12 +32,12 @@ app.use((req, res, next) => {
       ? logger.info(
           `[${req.method.toUpperCase()}] [${req.socket.remoteAddress}] [${
             res.statusCode
-          }] ${req.url}`
+          }] ${req.path}`
         )
       : logger.warn(
           `[${req.method.toUpperCase()}] [${req.socket.remoteAddress}] [${
             res.statusCode
-          }] ${req.url}`
+          }] ${req.path}`
         );
   });
 });

@@ -1,5 +1,6 @@
 import { Request } from 'express'
 import { Response } from '../typings/Response'
+import config from 'config'
 
 export const GetCreateBlogPage = async (req: Request, res: Response) => {
   res.render("blogs/create", {
@@ -37,6 +38,9 @@ export const GetSpecificBlogPage = async (req: Request, res: Response) => {
       title: "CFrum | View a blog",
       sidebarId: "blog",
     },
+    links: {
+      postComment: `${config.get("frontend.backend.path")}/comments/${req.params.id}`
+    }
   });
 };
 

@@ -1,12 +1,10 @@
 function displayErrorToast(message) {
-  let toast_container = document.querySelector(".toasts");
-  if (!toast_container) {
-    let toastDiv = document.createElement("div");
-    toastDiv.classList.add("toasts");
-    document.querySelector(".interaction").appendChild(toastDiv);
-    toast_container = document.querySelector(".toasts");
+  let toast_container = $(".toasts");
+  if (!toast_container.length) {
+    $(".interaction").prepend(`<div class="toasts"></div>`);
+    toast_container = $(".toasts");
   }
-  toast_container.innerHTML += `
+  toast_container.html(`
         <div class="toast bg-danger text-white fade show errorToast">
       <div class="toast-header bg-danger text-white">
         <strong class="me-auto"
@@ -19,18 +17,16 @@ function displayErrorToast(message) {
         ></button>
       </div>
       <div class="toast-body">${message}</div>
-    </div>`;
+    </div>`);
 }
 
 function displayNotiToast(message) {
-  let toast_container = document.querySelector(".toasts");
-  if (!toast_container) {
-    let toastDiv = document.createElement("div");
-    toastDiv.classList.add("toasts");
-    document.querySelector(".interaction").appendChild(toastDiv);
-    toast_container = document.querySelector(".toasts");
+  let toast_container = $(".toasts");
+  if (!toast_container.length) {
+    $(".interaction").prepend(`<div class="toasts"></div>`);
+    toast_container = $(".toasts");
   }
-  toast_container.innerHTML += `
+  toast_container.html(`
         <div class="toast bg-primary text-white fade show" id="notiToast">
       <div class="toast-header bg-primary text-white">
         <strong class="me-auto"
@@ -43,20 +39,16 @@ function displayNotiToast(message) {
         ></button>
       </div>
       <div class="toast-body">${message}</div>
-    </div>`;
+    </div>`);
 }
 
 function showLoadingIcon() {
-  let loadingIconContainer = document.querySelector(".loading_icon");
-  if (!loadingIconContainer) {
-    let loadingIconContainer = document.createElement("div");
-    loadingIconContainer.classList.add("loading_icon");
-    document.body.appendChild(loadingIconContainer);
-    loadingIconContainer = document.querySelector(".loading_icon");
+  let loadingIconContainer = $(".loading_icon");
+  if (!loadingIconContainer.length) {
+    $("body").prepend(`<div class="loading_icon"></div>`);
     return showLoadingIcon();
   }
-  loadingIconContainer;
-  loadingIconContainer.innerHTML += `
+  loadingIconContainer.html(`
       <div class="music-waves-2">
         <span></span>
         <span></span>
@@ -65,14 +57,14 @@ function showLoadingIcon() {
         <span></span>
         <span></span>
         <span></span>
-      </div>`;
-  document.querySelector("*").style.overflow = "hidden";
+      </div>`);
+  $("*").css("overflow", "hidden");
 }
 
 function hideLoadingIcon() {
-  document.querySelector("*").style.overflow = "";
-  const loadingIconContainer = document.querySelector(".loading_icon");
-  if (!loadingIconContainer) return;
+  $("*").css("overflow", "");
+  const loadingIconContainer = $(".loading_icon");
+  if (!loadingIconContainer.length) return;
   loadingIconContainer.remove();
 }
 

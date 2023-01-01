@@ -14,10 +14,10 @@
   </body>
 </html>
 <script>
-  document.querySelector("#app").style.color = "<%= page.color || 'red' %>"
-  document.querySelector("#app .txt").innerHTML = `
+  $("#app").css("color", "<%= page.color || 'red' %>");
+  $("#app .txt").html(`
     <%= page.message %><span class="blink">_</span>
-  `
+  `);
 </script>
 <style>
   @import url("https://fonts.googleapis.com/css?family=Press+Start+2P");

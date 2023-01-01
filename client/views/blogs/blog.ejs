@@ -48,17 +48,43 @@
           <button
             class="deleteButton authorOnly"
             title="Delete this blog"
-            onclick="deleteBlog()"
+            onclick="deleteBlog(this)"
             onmouseover="this.style.cursor = 'pointer'"
           >
             <i class="fa-solid fa-trash-can"></i> Delete
           </button>
-          <button
-            class="commentButton"
-            onmouseover="this.style.cursor = 'pointer'"
+        </div>
+
+        <div class="comments">
+          <form
+            id="commentHeader"
           >
-            <i class="fa-solid fa-comments"></i> Comment
-          </button>
+            <% if(!locals.user.id) { %>
+            <span>
+              <a class="username" href="/auth/login">Log in</a>
+              to comment
+            </span>
+            <% } else { %>
+            <span
+              >Comment as
+              <a class="username" href="/users/<%= locals.user.id %>"
+                ><%= locals.user.username %></a
+              >
+            </span>
+            <textarea
+              name="textComment"
+              id="textComment"
+              placeholder="What are your thoughts?"
+            ></textarea>
+            <button
+              class="commentButton toolButton"
+              onmouseover="this.style.cursor = 'pointer'"
+              type="submit"
+            >
+              <i class="fa-solid fa-comments"></i> Comment
+            </button>
+            <% } %>
+          </form>
         </div>
       </div>
     </div>
@@ -79,7 +105,7 @@
           });
         } catch (err) {
           console.log(err);
-          document.querySelector("#content").style.display = "none";
+          $("#content").css("display", "none");
           hideLoadingIcon();
           if (!err.responseJSON)
             return displayErrorToast("I couldn't connect to the server!");
@@ -88,7 +114,7 @@
 
         const blog = blogFetchData.data;
 
-        if(!blog) {
+        if (!blog) {
           hideLoadingIcon();
           return displayErrorToast("I couldn't retrieve the blog information!");
         }
@@ -99,16 +125,14 @@
         postedDate.setUTCSeconds(blog.timestamp.seconds);
 
         // Bootstrap Tooltip
-        var timestampSpan = document.querySelector(
-          "#content #header .timestamp"
-        );
-        timestampSpan.innerHTML = ElapsedTimeConverter(postedDate);
-        timestampSpan.title = postedDate;
+        var timestampSpan = $("#content #header .timestamp");
+        timestampSpan.html(ElapsedTimeConverter(postedDate));
+        // timestampSpan.title = postedDate;
 
         $("[data-bs-toggle=tooltip]").tooltip();
 
         // Edit username
-        var headerUsername = document.querySelector("#content #header span a");
+        var headerUsername = $("#content #header span a");
         var authorName = "";
 
         try {
@@ -128,53 +152,59 @@
         }
 
         authorName = authorFetchData.user.username;
-        headerUsername.innerText = authorName;
-        headerUsername.href = headerUsername.href.replace(
-          "contentHeaderUsername",
-          blog.author
+        headerUsername.text(authorName);
+        headerUsername.attr(
+          "href",
+          headerUsername
+            .attr("href")
+            .replace("contentHeaderUsername", blog.author)
         );
 
         // Edit title
-        document.querySelector("#main .title").innerHTML = blog.title;
+        $("#main .title").html(blog.title);
 
-        const maxDescriptionWidthContainer =
-          document.querySelector("#main").clientWidth + "px";
+        let maxDescriptionWidthContainer = $("#main").innerWidth() + "px";
         // Edit description
-        document.querySelector("#main .description").innerHTML = marked.parse(
-          blog.description
-        );
+        $("#main .description").html(marked.parse(blog.description));
 
         // Edit image css
-        document.querySelectorAll("img").forEach((v) => {
-          console.log(v);
-          v.style.maxWidth = maxDescriptionWidthContainer;
+        let contentImgs = $("img");
+        contentImgs.each((i) => {
+          contentImgs[i].style.maxWidth = maxDescriptionWidthContainer;
         });
 
         // Edit avatar
-        document.querySelector(
-          "#content #header .avatar"
-        ).src = `https://avatars.dicebear.com/api/initials/${authorName}.svg`;
+        $("#content #header .avatar").attr(
+          "src",
+          `https://avatars.dicebear.com/api/initials/${authorName}.svg`
+        );
 
         window.addEventListener("resize", () => {
-          console.log(document.querySelector("#main").clientWidth + "px");
-          document.querySelectorAll("img").forEach((v) => {
-            console.log(v);
-            v.style.maxWidth =
-              document.querySelector("#main").clientWidth + "px";
+          maxDescriptionWidthContainer = $("#main").innerWidth() + "px";
+          contentImgs.each((i) => {
+            contentImgs[i].style.maxWidth = maxDescriptionWidthContainer;
           });
         });
 
         if (blog.author == "<%= locals.user.id %>") {
-          document
-            .querySelectorAll(".authorOnly")
-            .forEach((v) => (v.style.display = "block"));
+          let authorOnlyTools = $(".authorOnly");
+
+          authorOnlyTools.each(
+            (v) => (authorOnlyTools[v].style.display = "block")
+          );
         }
 
         hideLoadingIcon();
+
+        // Comment Submit
+        $("form#commentHeader").submit(() => {
+          event.preventDefault();
+          createComment($(".commentButton.toolButton"))
+        })
       });
     });
 
-    async function deleteBlog() {
+    async function deleteBlog(button) {
       let confirmation = prompt(
         `Are you sure you want to delete this blog? If you want to continue, please enter "${id}" to continue`
       );
@@ -182,6 +212,11 @@
       if (!confirmation) return;
       else if (confirmation != id)
         return displayErrorToast("You provided the wrong ID!");
+
+      button.setAttribute("disabled", "disabled");
+      button.innerHTML = `<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+              <span>Handling...</span>`;
+
       try {
         deleteFetchData = await $.ajax({
           url: `/api/blogs/${id}`,
@@ -194,6 +229,8 @@
         });
       } catch (err) {
         console.log(err);
+        button.removeAttribute("disabled");
+        button.innerHTML = `<i class="fa-solid fa-trash-can"></i> Delete`;
         if (!err.responseJSON)
           return displayErrorToast("I couldn't connect to the server!");
         return displayErrorToast(err.responseJSON.message);
@@ -208,10 +245,30 @@
         alertdisplayErrorToast(deleteFetchData.message);
       }
     }
+
+    async function createComment(button) {
+      const textarea = $("textarea#textComment");
+      if (!textarea)
+        return displayErrorToast(
+          "An error occured while loading the page! Please reload the page."
+        );
+      const value = textarea.val();
+      if (!value || value == "")
+        return displayErrorToast("Please fill in the description!");
+      try {
+        let data = await $.ajax()
+      } catch(err) {
+
+      }
+    }
   </script>
 </html>
 
 <style>
+  :root {
+    --commentTextArea-width: 500px;
+  }
+
   #content #header {
     margin-bottom: 20px;
   }
@@ -219,16 +276,19 @@
   .tools {
     margin-bottom: 20px;
     display: flex;
+    flex-direction: column;
   }
 
-  .tools button {
-    background-color: white;
-    padding: 5px;
-    border: none;
-    margin-right: 5px;
+  .tools button,
+  .toolButton {
+    width: var(--commentTextArea-width);
+    border: 1px solid #d3d3d3;
+    padding: 10px;
+    margin-bottom: 10px;
   }
 
-  .tools button:hover {
+  .tools button:hover,
+  .toolButton:hover {
     background-color: #d3d3d3;
   }
 
@@ -257,5 +317,37 @@
 
   .authorOnly {
     display: none;
+  }
+
+  .comments #commentHeader #textComment {
+    margin-top: 5px;
+    resize: vertical;
+    resize: none;
+    width: var(--commentTextArea-width);
+    height: 125px;
+    padding: 10px;
+    border: 1px solid #d3d3d3;
+  }
+
+  .comments #commentHeader {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .commentButton {
+    width: var(--commentTextArea-width);
+    margin-top: 5px;
+  }
+
+  @media screen and (max-width: 1000px) {
+    :root {
+      --commentTextArea-width: 100%;
+    }
+
+    .tools button,
+    .toolButton {
+      padding: 30px;
+      margin-bottom: 30px;
+    }
   }
 </style>

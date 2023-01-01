@@ -9,7 +9,6 @@
   </head>
   <body>
     <div class="interaction">
-      <div class="toasts"></div>
       <%- include('../partials/sidebar.ejs') %>
       <div id="content"></div>
     </div>
@@ -21,9 +20,7 @@
 
       let requestData;
       try {
-        let userRequest = await fetch(`<%= page.userURLFetch %>`);
-        requestData =
-          (await userRequest.json()) || JSON.parse(await userRequest.text());
+        requestData = await $.ajax(`<%= page.userURLFetch %>`);
       } catch (err) {
         console.log(err);
         displayErrorToast(`${err}`);
@@ -42,15 +39,15 @@
 
           let createdAt = string;
           // End - Handle Created At
-          const contentContainer = document.querySelector("#content");
-          contentContainer.innerHTML += `
+          const contentContainer = $("#content");
+          contentContainer.html(`
       <ul>
           <li>ID: ${userData.id}</li>
           <li>Username: ${userData.username}</li>
           <li>Email: ${userData.email}</li>
           <li class="createdAt">Created At: ${createdAt} (milliseconds)</li>
       </ul>
-      `;
+      `);
       hideLoadingIcon();
         }
       } else {

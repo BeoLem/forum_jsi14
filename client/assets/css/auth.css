@@ -88,4 +88,10 @@
     justify-content: center;
     align-items: center;
   }
+
+  .auth-model {
+    margin-left: 0;
+    width: 100%;
+    min-width: 100%;
+  }
 }

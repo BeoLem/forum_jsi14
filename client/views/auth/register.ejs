@@ -6,7 +6,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title><%= page.title %></title>
     <link rel="stylesheet" href="/assets/css/auth.css" />
-    <link rel="stylesheet" href="/assets/css/global.css" />
     <%- include('../partials/components.ejs') %>
   </head>
   <body>
@@ -88,42 +87,6 @@
   </body>
 
   <script>
-    function displayErrorToast(message) {
-      const toast_container = document.querySelector(".toasts");
-      toast_container.innerHTML += `
-        <div class="toast bg-danger text-white fade show errorToast">
-      <div class="toast-header bg-danger text-white">
-        <strong class="me-auto"
-          ><i class="fa-solid fa-circle-xmark"></i> Error
-        </strong>
-        <button
-          type="button"
-          class="btn-close btn-close-white"
-          data-bs-dismiss="toast"
-        ></button>
-      </div>
-      <div class="toast-body">${message}</div>
-    </div>`;
-    }
-
-    function displayNotiToast(message) {
-      const toast_container = document.querySelector(".toasts");
-      toast_container.innerHTML += `
-        <div class="toast bg-primary text-white fade show" id="notiToast">
-      <div class="toast-header bg-primary text-white">
-        <strong class="me-auto"
-          ><i class="fa-solid fa-circle-exclamation"></i> Notification
-        </strong>
-        <button
-          type="button"
-          class="btn-close btn-close-white"
-          data-bs-dismiss="toast"
-        ></button>
-      </div>
-      <div class="toast-body">${message}</div>
-    </div>`;
-    }
-
     document.addEventListener("DOMContentLoaded", function () {
       if ("<%= query.error %>") {
         displayErrorToast("<%= query.error %>");
