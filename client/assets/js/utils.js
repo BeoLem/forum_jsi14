@@ -95,3 +95,11 @@ const ElapsedTimeConverter = (timestamp) => {
 
   return finalResult;
 };
+
+function getBaseURL() {
+  return $(location).attr("origin") || window.location.origin;
+}
+
+async function sleep(ms) {
+  return new Promise((ful) => setTimeout(ful, ms));
+}

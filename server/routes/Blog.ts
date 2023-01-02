@@ -1,15 +1,15 @@
-import express from 'express'
+import express from "express";
 import {
-    CreateBlog,
-    DeleteBlog,
-    EditBlog,
-    GetBlogList,
-    GetSpecificBlog,
-} from '../controllers/Blog'
-import { AuthUser } from '../middlewares/Auth'
-import { ValidateBody, ValidateHeader } from '../middlewares/Validation'
+  CreateBlog,
+  DeleteBlog,
+  EditBlog,
+  GetBlogList,
+  GetSpecificBlog,
+} from "../controllers/Blog";
+import { AuthUser } from "../middlewares/Auth";
+import { ValidateBody, ValidateHeader } from "../middlewares/Validation";
 
-const router = express.Router()
+const router = express.Router();
 
 /**
  * @route /blogs/
@@ -18,34 +18,34 @@ const router = express.Router()
  * @desc Create a blog
  */
 router.post(
-    '/',
-    ValidateHeader([
-        {
-            name: 'authorization',
-            type: 'string',
-            required: true,
-        },
-    ]),
-    ValidateBody([
-        {
-            name: 'title',
-            type: 'string',
-            required: true,
-        },
-        {
-            name: 'description',
-            type: 'string',
-            required: true,
-        },
-        {
-            name: 'category',
-            type: 'string',
-            required: true,
-        },
-    ]),
-    AuthUser(true),
-    CreateBlog
-)
+  "/",
+  ValidateHeader([
+    {
+      name: "authorization",
+      type: "string",
+      required: true,
+    },
+  ]),
+  ValidateBody([
+    {
+      name: "title",
+      type: "string",
+      required: true,
+    },
+    {
+      name: "description",
+      type: "string",
+      required: true,
+    },
+    {
+      name: "category",
+      type: "string",
+      required: true,
+    },
+  ]),
+  AuthUser(true),
+  CreateBlog
+);
 
 /**
  * @route /blogs/:id
@@ -54,23 +54,23 @@ router.post(
  * @desc Delete a blog
  */
 router.delete(
-    '/:id',
-    ValidateHeader([
-        {
-            name: 'authorization',
-            type: 'string',
-            required: true,
-        },
-    ]),
-    AuthUser(true),
-    DeleteBlog
-)
+  "/:id",
+  ValidateHeader([
+    {
+      name: "authorization",
+      type: "string",
+      required: true,
+    },
+  ]),
+  AuthUser(true),
+  DeleteBlog
+);
 
 /**
  * @route /blogs/:id
  * @method patch
  * @access public
- * @desc Edit a blog
+ * @desc Edit this blog
  */
 router.patch(
   "/:id",
@@ -108,7 +108,7 @@ router.patch(
  * @access public
  * @desc Get blog list
  */
-router.get('/@list', GetBlogList)
+router.get("/@list", GetBlogList);
 
 /**
  * @route /blogs/:id
@@ -116,6 +116,6 @@ router.get('/@list', GetBlogList)
  * @access public
  * @desc Get a blog
  */
-router.get('/:id', GetSpecificBlog)
+router.get("/:id", GetSpecificBlog);
 
-export = router
+export = router;

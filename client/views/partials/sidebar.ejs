@@ -70,47 +70,47 @@
     onerror="this.src = '/assets/imgs/avatar.png'"
   />
   <% } else { %>
-  <img
-    class="avatar"
-    src="/assets/imgs/avatar.png"
-    onclick="location.href = '/auth/login/'"
-    onerror="this.src = '/assets/imgs/avatar.png'"
-  />
+  <a href="/auth/login"
+    ><img
+      class="avatar"
+      src="/assets/imgs/avatar.png"
+      onerror="this.src = '/assets/imgs/avatar.png'"
+  /></a>
   <% } %>
 </div>
 
 <div id="sidebar-responsive-items" class="sidebarItems">
-    <div class="sidebarItem" id="home" onclick="location.href='/'">
-      <i class="fa-solid fa-house"></i>
-      <a href="/" class="name">Home</a>
-    </div>
-    <div class="sidebarItem" id="about" onclick="location.href='/about'">
-      <i class="fa-solid fa-info"></i>
-      <a href="/about" class="name">About Us</a>
-    </div>
-    <div class="sidebarItem" id="blog" onclick="location.href='/blogs'">
-      <i class="fa-solid fa-rss"></i>
-      <a href="/blogs/" class="name">Blogs</a>
-    </div>
-    <div class="sidebarItem" id="user" onclick="location.href='/users'">
-      <i class="fa-solid fa-user"></i>
-      <a href="/users/" class="name">Users</a>
-    </div>
-    <div class="sidebarItem" id="settings" onclick="location.href='/settings'">
-      <i class="fa-solid fa-gear"></i>
-      <a href="/settings/" class="name">Settings</a>
-    </div>
-    <% if (locals.user.username) { %>
-    <div class="sidebarItem" id="logout" onclick="location.href='/auth/logout'">
-      <i class="fa-solid fa-right-from-bracket"></i>
-      <a href="/auth/logout" class="name">Log Out</a>
-    </div>
-    <% } else { %>
-    <div class="sidebarItem" id="login" onclick="location.href='/auth/login'">
-      <i class="fa-solid fa-right-to-bracket"></i>
-      <a href="/auth/login" class="name">Log In</a>
-    </div>
-    <% } %>
+  <div class="sidebarItem" id="home" onclick="location.href='/'">
+    <i class="fa-solid fa-house"></i>
+    <a href="/" class="name">Home</a>
+  </div>
+  <div class="sidebarItem" id="about" onclick="location.href='/about'">
+    <i class="fa-solid fa-info"></i>
+    <a href="/about" class="name">About Us</a>
+  </div>
+  <div class="sidebarItem" id="blog" onclick="location.href='/blogs'">
+    <i class="fa-solid fa-rss"></i>
+    <a href="/blogs/" class="name">Blogs</a>
+  </div>
+  <div class="sidebarItem" id="user" onclick="location.href='/users'">
+    <i class="fa-solid fa-user"></i>
+    <a href="/users/" class="name">Users</a>
+  </div>
+  <div class="sidebarItem" id="settings" onclick="location.href='/settings'">
+    <i class="fa-solid fa-gear"></i>
+    <a href="/settings/" class="name">Settings</a>
+  </div>
+  <% if (locals.user.username) { %>
+  <div class="sidebarItem" id="logout" onclick="location.href='/auth/logout'">
+    <i class="fa-solid fa-right-from-bracket"></i>
+    <a href="/auth/logout" class="name">Log Out</a>
+  </div>
+  <% } else { %>
+  <div class="sidebarItem" id="login" onclick="location.href='/auth/login'">
+    <i class="fa-solid fa-right-to-bracket"></i>
+    <a href="/auth/login" class="name">Log In</a>
+  </div>
+  <% } %>
 </div>
 
 <script>
@@ -118,7 +118,7 @@
     const sidebarId = '<%= page.sidebarId || "" %>';
     if (!sidebarId) return;
     const menuItems = document.querySelectorAll(`.sidebarItem#${sidebarId}`);
-    menuItems.forEach(v => v.classList.add("chosen"));
+    menuItems.forEach((v) => v.classList.add("chosen"));
   }
 
   function render() {
@@ -138,9 +138,13 @@
   });
 
   // Handle Menu Icon
-  document.querySelector("#sidebar-responsive .menu-icon").addEventListener("click", () => {
-    document.querySelector("#sidebar-responsive-items").classList.toggle("active")
-  })
+  document
+    .querySelector("#sidebar-responsive .menu-icon")
+    .addEventListener("click", () => {
+      document
+        .querySelector("#sidebar-responsive-items")
+        .classList.toggle("active");
+    });
 </script>
 
 <!-- <div id="fake-sidebar"></div> -->

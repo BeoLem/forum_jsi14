@@ -12,19 +12,14 @@
     <div class="toasts"></div>
     <div class="container">
       <form id="form">
-        <h3 class="title">Edit the blog</h3>
-        <input
-          type="text"
-          title="Blog Title"
-          required
-          class="inputTitle"
-        />
+        <h3 class="title">Edit this blog</h3>
+        <input type="text" title="Blog Title" required class="inputTitle" />
         <textarea name="text" id="editor"></textarea>
 
         <div class="w-100" id="btn-container">
           <button class="submit-btn" style="margin-bottom: 0px">
             <span><i class="fa-solid fa-pen-to-square"></i></span>
-            <span>Edit the blog</span>
+            <span>Edit this blog</span>
           </button>
         </div>
       </form>
@@ -61,84 +56,79 @@
       $("input.inputTitle").val(blog.title);
 
       jQuery(document).ready(function ($) {
-        $("#editor").val(blog.description);
+        var simplemde = new SimpleMDE({ element: $("#editor")[0] });
 
-        $("#editor").markdownEditor({
-          preview: true,
-          onPreview: function (content, callback) {
-            callback(marked.parse(content));
-          },
-        });
+        simplemde.value(blog.description);
 
         document.querySelector("textarea").style.padding = "10px";
-      });
 
-      const parseCookie = (str) =>
-        str
-          .split(";")
-          .map((v) => v.split("="))
-          .reduce((acc, v) => {
-            acc[decodeURIComponent(v[0].trim())] = decodeURIComponent(
-              v[1].trim()
+        const parseCookie = (str) =>
+          str
+            .split(";")
+            .map((v) => v.split("="))
+            .reduce((acc, v) => {
+              acc[decodeURIComponent(v[0].trim())] = decodeURIComponent(
+                v[1].trim()
+              );
+              return acc;
+            }, {});
+        const cookies = parseCookie(document.cookie);
+
+        $("form").on("submit", async (ev) => {
+          const description = simplemde.value() || $("#editor").val();
+          const title = $("form input.inputTitle").val();
+          if (!title || !description)
+            return alert(
+              "Please fill in all of the required fields before editing the blog"
             );
-            return acc;
-          }, {});
-      const cookies = parseCookie(document.cookie);
-
-      $("form").on("submit", async (ev) => {
-        const description = $("#editor").val();
-        const title = $("form input.inputTitle").val();
-        if (!title || !description)
-          return alert(
-            "Please fill in all of the required fields before editing the blog"
-          );
-        submitBtnContainer.innerHTML = `<button class="submit-btn" disabled>
+          submitBtnContainer.innerHTML = `<button class="submit-btn disabled" disabled>
             <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
             <span>Handling...</span>
           </button>`;
-        ev.preventDefault();
-        let data;
-        try {
-          data = await $.ajax({
-            url: `/api/blogs/${id}`,
-            method: "PATCH",
-            accepts: "application/json",
-            contentType: "application/json",
-            headers: {
-              authorization:
-                "<%= cookies.accessToken %>" || cookies.accessToken,
-            },
-            dataType: "json",
-            data: JSON.stringify({
-              title,
-              description,
-            }),
-          });
-        } catch (err) {
-          console.log(err);
-          submitBtnContainer.innerHTML = `<button class="submit-btn">
+          ev.preventDefault();
+          let data;
+          try {
+            data = await $.ajax({
+              url: `/api/blogs/${id}`,
+              method: "PATCH",
+              accepts: "application/json",
+              contentType: "application/json",
+              headers: {
+                authorization:
+                  "<%= cookies.accessToken %>" || cookies.accessToken,
+              },
+              dataType: "json",
+              data: JSON.stringify({
+                title,
+                description,
+              }),
+            });
+          } catch (err) {
+            console.log(err);
+            submitBtnContainer.innerHTML = `<button class="submit-btn">
             <span><i class="fa-solid fa-pen-to-square"></i></span>
-            <span>Edit a blog</span>
+            <span>Edit this blog</span>
           </button>`;
-          if (!err.responseJSON)
-            return alert("I couldn't connect to the server!");
-          return alert(err.responseJSON.message);
-        }
+            if (!err.responseJSON)
+              return alert("I couldn't connect to the server!");
+            return alert(err.responseJSON.message);
+          }
 
-        if (data.statusCode >= 200 && data.statusCode < 300) {
-          localStorage.removeItem("blogEditDescription");
-          submitBtnContainer.innerHTML = `<button class="submit-btn" disabled>
+          if (data.statusCode >= 200 && data.statusCode < 300) {
+            localStorage.removeItem("blogEditDescription");
+            submitBtnContainer.innerHTML = `<button class="submit-btn disabled" disabled>
             <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
             <span>Redirecting...</span>
           </button>`;
-          location.href = `/blogs/${data.id}`;
-        } else {
-          alert("The blog is not edited successfully");
-          submitBtnContainer.innerHTML = `<button class="submit-btn">
+            location.href = `/blogs/${data.id}`;
+          } else {
+            alert("The blog is not edited successfully");
+            submitBtnContainer.innerHTML = `<button class="submit-btn">
             <span><i class="fa-solid fa-pen-to-square"></i></span>
-            <span>Edit a blog</span>
+            <span>Edit this blog</span>
           </button>`;
-        }
+          }
+        });
       });
     });
   </script>
@@ -146,6 +136,7 @@
 
 <style>
   .title {
+    margin-top: 10px;
     text-align: center;
     font-weight: bold;
   }
@@ -169,5 +160,9 @@
 
   .submit-btn:hover {
     opacity: 0.7;
+  }
+
+  #btn-container {
+    margin-bottom: 30px;
   }
 </style>

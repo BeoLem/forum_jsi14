@@ -183,7 +183,8 @@
   font-weight: 500;
 }
 
-.submit-btn:not([disabled]):hover {
+.submit-btn:not([disabled]):hover,
+.submit-btn.disabled {
   opacity: 0.7;
 }
 

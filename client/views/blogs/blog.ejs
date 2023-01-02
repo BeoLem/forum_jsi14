@@ -640,6 +640,7 @@
         return displayErrorToast("You provided the wrong ID!");
 
       button.setAttribute("disabled", "disabled");
+      button.classList.toggle("disabled");
       button.innerHTML = `<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
               <span>Handling...</span>`;
 
@@ -656,6 +657,7 @@
       } catch (err) {
         console.log(err);
         button.removeAttribute("disabled");
+        button.classList.toggle("disabled");
         button.innerHTML = `<i class="fa-solid fa-trash-can"></i> Delete`;
         if (!err.responseJSON)
           return displayErrorToast("I couldn't connect to the server!");
@@ -684,12 +686,13 @@
 
       textarea.attr("disabled", "disabled");
       button.attr("disabled", "disabled");
+      button.classList.toggle("disabled");
       button.html(`<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
               <span>Handling...</span>`);
 
       let data;
       try {
-        data = await $.ajax("<%= links.postComment %>", {
+        data = await $.ajax("/api/comments/", {
           method: "POST",
           accepts: "application/json",
           data: JSON.stringify({
@@ -704,6 +707,7 @@
       } catch (err) {
         textarea.removeAttr("disabled");
         button.removeAttr("disabled");
+        button.classList.toggle("disabled");
         button.html(`<i class="fa-solid fa-comments"></i> Comment`);
         console.log(err);
         if (!err.responseJSON)
@@ -713,6 +717,7 @@
 
       textarea.removeAttr("disabled");
       button.removeAttr("disabled");
+      button.classList.toggle("disabled");
       button.html(`<i class="fa-solid fa-comments"></i> Comment`);
       textarea.val("");
       displayNotiToast("Comment posted!");

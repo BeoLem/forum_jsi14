@@ -31,30 +31,29 @@
         </div> -->
 
         <div class="blogs"></div>
-        <button
-          class="submit-btn render-more-blogs"
-          onclick="blogButtonRender()"
-        >
-          <span><i class="fa-solid fa-folder-plus"></i></span>
-          <span>Show more blogs</span>
-        </button>
       </div>
     </div>
   </body>
   <script type="text/javascript">
     let totalBlogs = 1;
     let requestMore = 10;
+    let infiniteScrollEnabled = true;
+    let isLoading = false;
+    let noticed = false;
+    const renderedBlogs = [];
 
-    async function blogButtonRender() {
-      const showMoreBlogsBtn = $(".submit-btn.render-more-blogs");
-      showMoreBlogsBtn.html(`<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-              <span>Handling...</span>`);
-      showMoreBlogsBtn.attr("disabled", true);
+    async function infiniteScroll() {
+      if (infiniteScrollEnabled == false || isLoading) return;
+      isLoading = true;
       let blogs = await getAndRenderBlogs();
-      if (blogs == false) displayErrorToast("I couldn't retrieve more blogs!");
-      showMoreBlogsBtn.html(`<span><i class="fa-solid fa-folder-plus"></i></span>
-          <span>Show more blogs</span>`);
-      showMoreBlogsBtn.attr("disabled", false);
+      if (!Array.isArray(blogs) || blogs == false) {
+        infiniteScrollEnabled = false;
+        if (noticed == false) {
+          displayNotiToast("You have reached the end!");
+          noticed = true;
+        }
+      }
+      isLoading = false;
     }
 
     async function getAndRenderBlogs() {
@@ -64,7 +63,7 @@
         return false;
       }
       await renderMoreBlog(blogs);
-      return true;
+      return blogs;
     }
 
     async function getMoreBlog() {
@@ -89,8 +88,8 @@
       }
 
       const blogs = blogsFetchData.data;
-      if(!blogs) {
-        displayErrorToast("I couldn't retrieve any blogs! Please try again!")
+      if (!blogs) {
+        displayErrorToast("I couldn't retrieve any blogs! Please try again!");
         return [];
       }
 
@@ -100,35 +99,38 @@
     }
 
     async function renderMoreBlog(array) {
-      await Promise.all(array.map(async (v) => {
-        const postedDate = new Date(0);
-        postedDate.setUTCSeconds(v.timestamp.seconds);
+      array = array.filter((v) => !renderedBlogs.includes(v.id));
+      await Promise.all(
+        array.map(async (v) => {
+          if (renderedBlogs.includes(v.id)) return;
+          const postedDate = new Date(0);
+          postedDate.setUTCSeconds(v.timestamp.seconds);
 
-        let usernameFetchData;
-        let username;
+          let usernameFetchData;
+          let username;
 
-        try {
-          usernameFetchData = await $.ajax({
-            url: `/api/users/${v.author}`,
-            method: "GET",
-            accepts: "application/json",
-            contentType: "application/json",
-          });
-        } catch (err) {
-          console.log(err);
-          if (!err.responseJSON)
-            return displayErrorToast("I couldn't connect to the server!");
-          return displayErrorToast(err.responseJSON.message);
-          username = `Unknown`;
-        }
+          try {
+            usernameFetchData = await $.ajax({
+              url: `/api/users/${v.author}`,
+              method: "GET",
+              accepts: "application/json",
+              contentType: "application/json",
+            });
+          } catch (err) {
+            console.log(err);
+            if (!err.responseJSON)
+              return displayErrorToast("I couldn't connect to the server!");
+            return displayErrorToast(err.responseJSON.message);
+            username = `Unknown`;
+          }
 
-        username = usernameFetchData.user.username;
+          username = usernameFetchData.user.username;
 
-        document.querySelector(
-          ".blogs"
-        ).innerHTML += `<div class="blog" onclick="location.href = '/blogs/${
-          v.id
-        }'">
+          document.querySelector(
+            ".blogs"
+          ).innerHTML += `<div class="blog" onclick="location.href = '/blogs/${
+            v.id
+          }'">
             <div class="header">
               <img class="avatar" src="https://avatars.dicebear.com/api/initials/${username}.svg" alt="">
               <span
@@ -148,7 +150,9 @@
               <h3 class="title">${v.title}</h3>
             </div>
           </div>`;
-      }));
+          renderedBlogs.push(v.id);
+        })
+      );
     }
     document.addEventListener("DOMContentLoaded", () => {
       jQuery(document).ready(async function ($) {
@@ -157,6 +161,16 @@
         await getAndRenderBlogs();
 
         hideLoadingIcon();
+
+        $(window).scroll(() => {
+          if (
+            $(window).scrollTop() + $(window).height() >=
+              $(document).height() &&
+            infiniteScrollEnabled == true
+          ) {
+            infiniteScroll();
+          }
+        });
       });
     });
   </script>

@@ -1,6 +1,5 @@
-import { Request } from 'express'
-import { Response } from '../typings/Response'
-import config from 'config'
+import { Request } from "express";
+import { Response } from "../typings/Response";
 
 export const GetCreateBlogPage = async (req: Request, res: Response) => {
   res.render("blogs/create", {
@@ -15,7 +14,7 @@ export const GetCreateBlogPage = async (req: Request, res: Response) => {
 
 export const GetEditBlogPage = async (req: Request, res: Response) => {
   const id = req.params.id;
-  if(!id) return res.redirect("/");
+  if (!id) return res.redirect("/");
 
   res.render("blogs/edit", {
     params: req.params,
@@ -23,7 +22,7 @@ export const GetEditBlogPage = async (req: Request, res: Response) => {
     cookies: req.cookies,
     locals: res.locals || {},
     page: {
-      title: "CFrum | Edit a blog",
+      title: "CFrum | Edit this blog",
     },
   });
 };
@@ -38,9 +37,6 @@ export const GetSpecificBlogPage = async (req: Request, res: Response) => {
       title: "CFrum | View a blog",
       sidebarId: "blog",
     },
-    links: {
-      postComment: `${config.get("frontend.backend.path")}/comments/`
-    }
   });
 };
 

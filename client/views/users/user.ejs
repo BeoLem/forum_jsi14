@@ -20,7 +20,7 @@
 
       let requestData;
       try {
-        requestData = await $.ajax(`<%= page.userURLFetch %>`);
+        requestData = await $.ajax(`/api/users/${userId}`);
       } catch (err) {
         console.log(err);
         displayErrorToast(`${err}`);
@@ -32,7 +32,7 @@
           displayNotiToast(`User is not exist!`);
           hideLoadingIcon();
         } else {
-          const userData = requestData.user
+          const userData = requestData.user;
           // Handle Created At
           const date = new Date(userData.timestamp.seconds * 1000);
           const string = `${date.toDateString()}, ${date.toLocaleTimeString()}`;
@@ -48,7 +48,7 @@
           <li class="createdAt">Created At: ${createdAt} (milliseconds)</li>
       </ul>
       `);
-      hideLoadingIcon();
+          hideLoadingIcon();
         }
       } else {
         console.log(`${requestData.message}`);

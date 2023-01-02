@@ -73,8 +73,8 @@
   </body>
 
   <script>
-    if ("<%= query.redirectTo %>") {
-      localStorage.setItem("redirectTo", "<%= query.redirectTo %>");
+    if ("<%= query.redirect %>") {
+      localStorage.setItem("redirect", "<%= query.redirect %>");
     }
 
     document.addEventListener("DOMContentLoaded", function () {
@@ -89,14 +89,14 @@
       form.onsubmit = async () => {
         event.preventDefault();
         document.querySelector("#btn-container").innerHTML = `
-            <button class="btn submit-btn btn-primary w-100" type="submit" disabled>
+            <button class="btn submit-btn disabled btn-primary w-100" type="submit" disabled>
               <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
               <span>Handling...</span>
             </button>
     `;
         let request;
         try {
-          request = await fetch("/auth/login", {
+          request = await fetch(`/auth/login`, {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
@@ -128,17 +128,17 @@
         if (data.statusCode >= 200 && data.statusCode <= 300) {
           document.querySelector("#btn-container").innerHTML = `
             <div class="w-100" id="btn-container">
-            <button class="btn submit-btn btn-primary w-100" type="submit" disabled>
+            <button class="btn submit-btn disabled btn-primary w-100" type="submit" disabled>
               <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
               <span>Redirecting...</span>
             </button>
           </div>
     `;
-          if(localStorage.getItem('redirectTo')) {
-            location.href = localStorage.getItem('redirectTo');
-            localStorage.removeItem('redirectTo')
+          if (localStorage.getItem("redirect")) {
+            location.href = localStorage.getItem("redirect");
+            localStorage.removeItem("redirect");
           } else {
-            location.href = '/';
+            location.href = "/";
           }
         } else {
           displayErrorToast(`${data.message}`);

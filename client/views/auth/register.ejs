@@ -94,22 +94,22 @@
       if ("<%= query.notification %>") {
         displayNotiToast("<%= query.notification %>");
       }
-      if("<%= query.redirectTo %>") {
-        localStorage.setItem("redirectTo", '<%= query.redirectTo %>')
+      if ("<%= query.redirect %>") {
+        localStorage.setItem("redirect", "<%= query.redirect %>");
       }
 
       const form = document.querySelector("form");
       form.onsubmit = async () => {
         event.preventDefault();
         document.querySelector("#btn-container").innerHTML = `
-            <button class="btn submit-btn btn-primary w-100" type="submit" disabled>
+            <button class="btn submit-btn disabled btn-primary w-100" type="submit" disabled>
               <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
               <span>Handling...</span>
             </button>
     `;
         let request;
         try {
-          request = await fetch("/auth/register", {
+          request = await fetch(`/auth/register`, {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
@@ -144,13 +144,14 @@
             "#btn-container"
           ).innerHTML = `
             <div class="w-100" id="btn-container">
-            <button class="btn submit-btn btn-primary w-100" type="submit" disabled>
+            <button class="btn submit-btn disabled btn-primary w-100" type="submit" disabled>
               <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
               <span>Redirecting...</span>
             </button>
           </div>
     `);
-          location.href = "/auth/login/?notification=Please log in with your new account";
+          location.href =
+            "/auth/login/?notification=Please log in with your new account";
         } else {
           console.log(data);
           displayErrorToast(`${data.message}`);
