@@ -94,21 +94,13 @@ router.patch(
 );
 
 /**
- * @route /comments/@list
+ * @route /comments/:id/@list
  * @method get
  * @access public
  * @desc Get comment list
  */
 router.get(
-  "/@list",
-  ValidateBody([
-    {
-      name: "blogId",
-      type: "string",
-      required: true,
-    },
-  ]),
-  GetCommentList
+  "/:id/@list", GetCommentList
 );
 
 /**

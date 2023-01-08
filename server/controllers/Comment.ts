@@ -162,7 +162,7 @@ export const EditComment = async (req: Request, res: Response) => {
 
 export const GetCommentList = async (req: Request, res: Response) => {
   try {
-    const blogId = req.body.blogId;
+    const blogId = req.params.id;
 
     const blog =
       (

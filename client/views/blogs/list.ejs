@@ -68,9 +68,39 @@
 
     async function getMoreBlog() {
       let range = `${totalBlogs || 1}-${totalBlogs + requestMore || 10}`;
+      const limitedToThisAuthor = `<%= query.author %>`
+      let blogFetchLink = `/api/blogs/@list?range=${range}`;
+      if (limitedToThisAuthor) {
+        blogFetchLink += `&author=${limitedToThisAuthor}`;
+        let usernameFetchData;
+        let username;
+
+        try {
+          usernameFetchData = await $.ajax({
+            url: `/api/users/${limitedToThisAuthor}`,
+            method: "GET",
+            accepts: "application/json",
+            contentType: "application/json",
+          });
+        } catch (err) {
+          console.log(err);
+          if (!err.responseJSON)
+            return displayErrorToast("I couldn't connect to the server!");
+          return displayErrorToast(err.responseJSON.message);
+          username = `Unknown`;
+        }
+
+        username = usernameFetchData?.user?.username;
+        if(!username) {
+          alert("You are viewing a non-existing person's blog list! Please click OK to return to the home page");
+          location.href = "/";
+        }
+        displayNotiToast(`You are viewing <strong>${username}</strong>'s blog list`);
+      }
+      console.log(blogFetchLink);
       try {
         blogsFetchData = await $.ajax({
-          url: `/api/blogs/@list?range=${range}`,
+          url: blogFetchLink,
           method: "GET",
           accepts: "application/json",
           contentType: "application/json",

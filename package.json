@@ -21,10 +21,10 @@
   "version": "1.0.0",
   "main": "app.js",
   "scripts": {
-    "build": "cd ./client/assets && npx bower install bootstrap-markdown-editor --save && cd ../../ && npx tsc",
+    "build": "npx tsc",
     "start": "npx ts-node ./app.ts",
     "start:prod": "npm run build && NODE_ENV=production node ./build/app.js",
-    "start:dev": "NODE_ENV=development && npx nodemon ./app.ts"
+    "start:dev": "npx nodemon ./app.ts"
   },
   "keywords": [],
   "author": "",
