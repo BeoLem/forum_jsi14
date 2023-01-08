@@ -2,10 +2,13 @@ import { Request } from "express";
 import { Response } from "../typings/Response";
 
 export const GetHomePage = async (req: Request, res: Response) => {
-  res.render("web/root", {
-    locals: res.locals,
+  res.render("blogs/list", {
+    query: req.query,
+    params: req.params,
+    cookies: req.cookies,
+    locals: res.locals || {},
     page: {
-      title: "CFrum | Home",
+      title: "CFrum | Blogs",
       sidebarId: "home",
     },
   });
@@ -26,9 +29,9 @@ export const GetErrorPage = async (req: Request, res: Response) => {
     page: {
       status: req.query.status || "404",
       message: req.query.message || "Not Found",
-      title: req.query.title || 'CFrum | Not Found',
+      title: req.query.title || "CFrum | Not Found",
       color: req.query.color || "red",
-      redirect: req.query.redirect || "/"
+      redirect: req.query.redirect || "/",
     },
   });
-}
+};

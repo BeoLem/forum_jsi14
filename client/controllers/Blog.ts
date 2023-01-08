@@ -41,14 +41,5 @@ export const GetSpecificBlogPage = async (req: Request, res: Response) => {
 };
 
 export const GetBlogListPage = async (req: Request, res: Response) => {
-  res.render("blogs/list", {
-    query: req.query,
-    params: req.params,
-    cookies: req.cookies,
-    locals: res.locals || {},
-    page: {
-      title: "CFrum | Blogs",
-      sidebarId: "blog",
-    },
-  });
+  res.redirect("/")
 };
