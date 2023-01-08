@@ -4,7 +4,13 @@ import config from "config";
 import { getHost } from "../utils/URL";
 
 export const GetUserList = async (req: Request, res: Response) => {
-  res.redirect("/")
+  res.render("users/list", {
+    locals: res.locals,
+    page: {
+      title: `CFrum Users`,
+      sidebarId: "user"
+    }
+  })
 };
 
 export const GetSpecificUser = async(req: Request, res: Response) => {
