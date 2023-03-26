@@ -39,7 +39,7 @@ export const CreateUser = async (req: Request, res: Response) => {
         .status(409)
         .send(CreateRespond("User already found in the database", 409));
 
-    const hashedPassword = HashPassword(password);
+    const hashedPassword = await HashPassword(password);
 
     const docRef = await addDoc(
       ref,

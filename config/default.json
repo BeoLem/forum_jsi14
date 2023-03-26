@@ -25,9 +25,6 @@
                     "otherwise, you must log in again"
                 ]
             }
-        },
-        "bcrypt": {
-            "salt": 10
         }
     },
     "frontend": {

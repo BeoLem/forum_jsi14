@@ -34,7 +34,7 @@ export const CreateSession = async (req: Request, res: Response) => {
     if (!userSnapshot || !user)
       return res.status(401).send(CreateRespond("User not found", 401, null));
 
-    if (!ComparePassword(password, user.password))
+    if (!(await ComparePassword(password, user.password)))
       return res
         .status(401)
         .send(CreateRespond("Incorrect Password", 401, null));

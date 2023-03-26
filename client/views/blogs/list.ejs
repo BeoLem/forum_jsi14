@@ -12,15 +12,27 @@
       <div class="toasts"></div>
       <%- include('../partials/sidebar.ejs') %>
       <div id="content">
+        <% if(!locals.user.id) { %>
         <div class="w-100" id="btn-container">
           <button
             class="submit-btn create-btn"
-            onclick="location.href = '/blogs/create'"
+            onclick="location.href = '/auth/login?redirect=/blogs/create'"
           >
             <span><i class="fa-regular fa-calendar-plus"></i></span>
             <span>Create a blog</span>
           </button>
         </div>
+        <% } else { %>
+          <div class="w-100" id="btn-container">
+            <button
+              class="submit-btn create-btn"
+              onclick="location.href = '/blogs/create'"
+            >
+              <span><i class="fa-regular fa-calendar-plus"></i></span>
+              <span>Create a blog</span>
+            </button>
+          </div>
+        <% } %>
 
         <!-- <div class="filterTool">
           <div class="blogAuthorFilter">

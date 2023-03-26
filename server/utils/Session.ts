@@ -1,6 +1,6 @@
 import config from 'config'
 import jwt from 'jsonwebtoken'
-import bcrypt from 'bcrypt'
+import argon2 from 'argon2'
 import {
     addDoc,
     collection,
@@ -23,7 +23,6 @@ import {
     TResponseLocalsUser,
 } from '../typings/Response'
 
-const salt = parseInt(config.get('backend.bcrypt.salt'))
 const jwtToken = config.get('backend.auth.jwt') as string
 
 interface SessionPayload {
@@ -152,5 +151,5 @@ export const GenerateToken = async (
     }
 }
 
-export const ComparePassword = (plain: string, hashed: string) =>
-    bcrypt.compareSync(plain, hashed)
+export const ComparePassword = async(plain: string, hashed: string) =>
+    await argon2.verify(hashed, plain)

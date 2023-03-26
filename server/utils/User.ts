@@ -1,8 +1,6 @@
-import bcrypt from 'bcrypt'
+import argon2 from "argon2"
 import config from 'config'
 
-const salt = config.get('backend.bcrypt.salt') as number
-
-export const HashPassword = (password: string) => {
-    return bcrypt.hashSync(password, bcrypt.genSaltSync(salt))
+export const HashPassword = async(password: string) => {
+    return await argon2.hash(password)
 }
